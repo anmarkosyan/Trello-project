@@ -1,1 +1,14 @@
-console.log('Happy coding!)))))');
+import config from './config';
+
+console.log(config);
+
+
+
+
+
+
+
+
+
+
+
