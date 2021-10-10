@@ -16,9 +16,9 @@ const config: ConnectionOptions = {
     migrationsRun: true,
     logging: false,
     entities: [`src/entities/**/*.${isCompiled ? "js" : "ts"}`],
-    migrations: [path.join(__dirname, 'src/migration/**/*.${isCompiled ? "js" : "ts"}')],
+    migrations: [path.join(__dirname, 'src/db/migration/**/*.${isCompiled ? "js" : "ts"}')],
     cli: {
-        migrationsDir: 'src/migrations'
+        migrationsDir: 'src/db/migrations'
     }
 }
 
