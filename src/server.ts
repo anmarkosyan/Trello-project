@@ -1,16 +1,18 @@
 import 'reflect-metadata';
-import {createConnection} from 'typeorm';
+import { createConnection } from 'typeorm';
 import app from './app';
-import config from './config';
-import ormconfig from './ormconfig';
+import env from './config';
+import config from './ormconfig';
 
-
-//ormconfig file by Hayk
-createConnection(ormconfig)
+//config file by Hayk
+createConnection(config)
   .then(async connection => {
+    await connection.runMigrations();
     console.log('DB connection...');
-    app.listen(config.app.port, () => {
-      console.log(`Starting listen server on port ${config.app.port}...`);
+
+    const port = env.app.port;
+    app.listen(port, () => {
+      console.log(`Starting listen server on port ${port}...`);
     });
   })
   .catch(e => {
