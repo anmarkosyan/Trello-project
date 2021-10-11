@@ -12,4 +12,4 @@ router
   .patch(BoardController.updateBoard)
   .delete(BoardController.deleteBoard);
 
-export { router as boardRoute };
+export { router as boardRoutes };
