@@ -1,5 +1,6 @@
 import path from "path";
 import { ConnectionOptions } from "typeorm";
+import env from './config/index';
 // import {User} from './entities/User';
 
 
@@ -7,14 +8,13 @@ const isCompiled = path.extname(__filename).includes('js');
 
 const config: ConnectionOptions = {
     type: 'postgres',
-    host: 'db',
-    port: Number(process.env.POSTGRES_PORT),
-    username: process.env.POSTGRES_USER,
-    password: process.env.POSTGRES_PASSWORD,
-    database: process.env.POSTGRES_DB,
+    host: env.db.host,
+    port: Number(env.db.port),
+    username: env.db.user,
+    password: env.db.password,
+    database: env.db.db,
     synchronize: false,
     migrationsRun: true,
-    logging: false,
     entities: [`src/entities/**/*.${isCompiled ? "js" : "ts"}`],
     migrations: [path.join(__dirname, `src/db/migration/**/*.${isCompiled ? "js" : "ts"}`)],
     cli: {
