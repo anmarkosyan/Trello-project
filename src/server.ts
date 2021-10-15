@@ -4,13 +4,12 @@ import app from './app';
 import env from './config';
 import config from './ormconfig';
 
-//config file by Hayk
 createConnection(config)
   .then(async connection => {
     await connection.runMigrations();
     console.log('DB connection...');
 
-    const port = env.app.port;
+    const { port } = env.app;
     app.listen(port, () => {
       console.log(`Starting listen server on port ${port}...`);
     });
