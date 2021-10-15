@@ -12,8 +12,8 @@ enum Status {
 export class BoardController {
   static async createBoard(req: Request, res: Response) {
     const manager = getManager().getCustomRepository(BoardRepository);
+    const { title } = req.body;
     try {
-      const { title } = req.body;
       const board = new Board();
       board.title = title;
 
@@ -42,8 +42,8 @@ export class BoardController {
 
   static async getBoard(req: Request, res: Response) {
     const manager = getManager().getCustomRepository(BoardRepository);
+    const { id } = req.params;
     try {
-      const { id } = req.params;
       const oneData = await manager.getBoard(id);
 
       res.status(Status.Success).json(oneData);
