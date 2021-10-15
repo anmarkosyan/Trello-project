@@ -1,18 +1,14 @@
 import { EntityRepository, Repository } from 'typeorm';
 import { Board } from '../entities/Board';
 
-enum Alias {
-  BoardTable = 'board',
-}
-
 @EntityRepository(Board)
 export class BoardRepository extends Repository<Board> {
   getAllBoards() {
-    return this.createQueryBuilder(Alias.BoardTable).getMany();
+    return this.createQueryBuilder('board').getMany();
   }
 
   getBoard(boardId: string) {
-    return this.createQueryBuilder(Alias.BoardTable)
+    return this.createQueryBuilder('board')
       .select()
       .where('board.id = :query', { query: boardId })
       .getOne();
@@ -23,7 +19,7 @@ export class BoardRepository extends Repository<Board> {
   }
 
   updateBoard(title: string, lists: [], id: string) {
-    return this.createQueryBuilder(Alias.BoardTable)
+    return this.createQueryBuilder('board')
       .update(Board)
       .set({ title, lists })
       .where('board.id = :query', { query: id })
@@ -31,7 +27,7 @@ export class BoardRepository extends Repository<Board> {
   }
 
   deleteBoard(id: string) {
-    return this.createQueryBuilder(Alias.BoardTable)
+    return this.createQueryBuilder('board')
       .select()
       .where('board.id = :query', { query: id })
       .getOne();

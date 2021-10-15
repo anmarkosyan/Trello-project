@@ -2,12 +2,7 @@ import { Request, Response } from 'express';
 import { getManager } from 'typeorm';
 import { BoardRepository } from '../services/board';
 import { Board } from '../entities/Board';
-
-enum Status {
-  Success = 200,
-  Fail = 400,
-  Create = 201,
-}
+import HttpStatusCode from '../enums/HttpStatusCode';
 
 export class BoardController {
   static async createBoard(req: Request, res: Response) {
@@ -20,9 +15,9 @@ export class BoardController {
 
       const boardData = await manager.createBoard(board);
 
-      res.status(Status.Create).json(boardData);
+      res.status(HttpStatusCode.CreateRequest).json(boardData);
     } catch (e) {
-      res.status(Status.Fail).json({
+      res.status(HttpStatusCode.BadRequest).json({
         message: 'Something want wrong!!',
       });
     }
@@ -33,9 +28,9 @@ export class BoardController {
     try {
       const data = await manager.getAllBoards();
 
-      res.status(Status.Success).json(data);
+      res.status(HttpStatusCode.SuccessRequest).json(data);
     } catch (e) {
-      res.status(Status.Fail).json({
+      res.status(HttpStatusCode.BadRequest).json({
         message: 'Something want wrong!!',
       });
     }
@@ -47,9 +42,9 @@ export class BoardController {
     try {
       const oneData = await manager.getBoard(id);
 
-      res.status(Status.Success).json(oneData);
+      res.status(HttpStatusCode.SuccessRequest).json(oneData);
     } catch (e) {
-      res.status(Status.Fail).json({
+      res.status(HttpStatusCode.BadRequest).json({
         message: 'Something want wrong!!',
       });
     }
@@ -62,9 +57,9 @@ export class BoardController {
     try {
       const updateData = await manager.updateBoard(title, lists, id);
 
-      res.status(Status.Success).json(updateData);
+      res.status(HttpStatusCode.SuccessRequest).json(updateData);
     } catch (e) {
-      res.status(Status.Fail).json({
+      res.status(HttpStatusCode.BadRequest).json({
         message: 'Something want wrong!!',
       });
     }
@@ -76,11 +71,11 @@ export class BoardController {
     try {
       await manager.deleteBoard(id);
 
-      res.status(Status.Success).json({
+      res.status(HttpStatusCode.SuccessRequest).json({
         data: null,
       });
     } catch (e) {
-      res.status(Status.Fail).json({
+      res.status(HttpStatusCode.BadRequest).json({
         message: 'Something want wrong!!',
       });
     }
