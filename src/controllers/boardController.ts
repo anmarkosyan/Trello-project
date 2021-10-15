@@ -6,20 +6,21 @@ import { Board } from '../entities/Board';
 enum Status {
   Success = 200,
   Fail = 400,
-  Crated = 201,
+  Create = 201,
 }
 
 export class BoardController {
   static async createBoard(req: Request, res: Response) {
     const manager = getManager().getCustomRepository(BoardRepository);
     const { title } = req.body;
+
     try {
       const board = new Board();
       board.title = title;
 
       const boardData = await manager.createBoard(board);
 
-      res.status(Status.Crated).json(boardData);
+      res.status(Status.Create).json(boardData);
     } catch (e) {
       res.status(Status.Fail).json({
         message: 'Something want wrong!!',
