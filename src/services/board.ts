@@ -18,10 +18,10 @@ export class BoardRepository extends Repository<Board> {
     return this.save(newBoard);
   }
 
-  updateBoard(id: string, bodyData: string) {
+  updateBoard(id: string, title: string) {
     return this.createQueryBuilder('board')
       .update(Board)
-      .set({ title: bodyData })
+      .set({ title })
       .where('board.id = :query', { query: id })
       .execute()
       .then(() => this.findOne(id));

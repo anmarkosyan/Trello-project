@@ -71,7 +71,7 @@ export class BoardController {
     try {
       await manager.deleteBoard(id);
 
-      res.status(HttpStatusCode.SuccessRequest).json(null);
+      res.status(HttpStatusCode.SuccessRequest).end();
     } catch (e) {
       res.status(HttpStatusCode.BadRequest).json({
         message: 'Something want wrong!!',
