@@ -52,10 +52,10 @@ export class BoardController {
 
   static async updateBoard(req: Request, res: Response) {
     const manager = getManager().getCustomRepository(BoardRepository);
-    const { title, lists } = req.body;
+    const { title } = req.body;
     const { id } = req.params;
     try {
-      const updateData = await manager.updateBoard(title, lists, id);
+      const updateData = await manager.updateBoard(id, title);
 
       res.status(HttpStatusCode.SuccessRequest).json(updateData);
     } catch (e) {
@@ -71,9 +71,7 @@ export class BoardController {
     try {
       await manager.deleteBoard(id);
 
-      res.status(HttpStatusCode.SuccessRequest).json({
-        data: null,
-      });
+      res.status(HttpStatusCode.SuccessRequest).json(null);
     } catch (e) {
       res.status(HttpStatusCode.BadRequest).json({
         message: 'Something want wrong!!',

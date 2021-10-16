@@ -18,18 +18,20 @@ export class BoardRepository extends Repository<Board> {
     return this.save(newBoard);
   }
 
-  updateBoard(title: string, lists: [], id: string) {
+  updateBoard(id: string, bodyData: string) {
     return this.createQueryBuilder('board')
       .update(Board)
-      .set({ title, lists })
+      .set({ title: bodyData })
       .where('board.id = :query', { query: id })
-      .execute();
+      .execute()
+      .then(() => this.findOne(id));
   }
 
   deleteBoard(id: string) {
     return this.createQueryBuilder('board')
-      .select()
+      .delete()
+      .from(Board)
       .where('board.id = :query', { query: id })
-      .getOne();
+      .execute();
   }
 }
