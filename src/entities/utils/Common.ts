@@ -9,10 +9,6 @@ export class Common extends BaseEntity{
     @Column('varchar', { length: 100 })
     title: string;
 
-    @Column({
-        default: true
-    })
-    is_active: boolean;
 
     @CreateDateColumn()
     created_at: Date;
