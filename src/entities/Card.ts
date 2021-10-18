@@ -1,5 +1,5 @@
 import { Entity,ManyToOne,JoinColumn,Column,OneToMany } from 'typeorm';
-import {Common} from './utils/Common';
+import {Common} from './Common';
 import {List} from './List';
 import {Comment} from './Comment'
 
