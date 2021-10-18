@@ -1,5 +1,5 @@
 import { Entity,ManyToOne,JoinColumn,Column } from 'typeorm';
-import {Common} from './utils/Common';
+import {Common} from './Common';
 import {Card} from './Card';
 
 @Entity('comment')

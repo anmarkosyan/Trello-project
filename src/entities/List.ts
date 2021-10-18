@@ -1,5 +1,5 @@
 import { Entity,ManyToOne,JoinColumn,OneToMany } from 'typeorm';
-import {Common} from './utils/Common';
+import {Common} from './Common';
 import {Board} from './Board';
 import {Card} from './Card';
 
@@ -14,7 +14,7 @@ export class List extends Common{
 		}
 	)
 	@JoinColumn({
-		name: 'board_id',
+		name: 'board_Id',
 	})
 	board: Board;
 
