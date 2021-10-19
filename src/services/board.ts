@@ -1,5 +1,6 @@
 import { EntityRepository, Repository } from 'typeorm';
 import { Board } from '../entities/Board';
+import { IBoard } from '../interfaces';
 
 @EntityRepository(Board)
 export class BoardRepository extends Repository<Board> {
@@ -18,10 +19,10 @@ export class BoardRepository extends Repository<Board> {
     return this.save(newBoard);
   }
 
-  updateBoard(id: string, title: string) {
+  updateBoard(id: string, board: IBoard) {
     return this.createQueryBuilder('board')
       .update(Board)
-      .set({ title })
+      .set({ ...board })
       .where('board.id = :query', { query: id })
       .execute()
       .then(() => this.findOne(id));
