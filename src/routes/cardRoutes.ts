@@ -1,5 +1,16 @@
-import {Router} from 'express';
+import { Router } from 'express';
+import { CardController } from '../controllers/cardController';
 
-const route = Router();
+const router = Router();
+router
+  .route('/')
+  .get(CardController.getAllCards)
+  .post(CardController.createCard);
 
-export  {route as cardRoutes};
+router
+  .route('/:id')
+  .get(CardController.getCard)
+  .patch(CardController.updateCard)
+  .delete(CardController.deleteCard);
+
+export { router as cardRoutes };
