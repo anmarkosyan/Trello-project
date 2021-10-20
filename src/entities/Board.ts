@@ -1,13 +1,9 @@
-import { Entity,OneToMany } from 'typeorm';
-import {Common} from './Common';
-import {List} from './List'
+import { Entity, Column } from 'typeorm';
+import { Common } from './Common';
 
 @Entity('board')
-export class Board extends Common{
+export class Board extends Common {
 
-    @OneToMany(
-		() => List,
-		(list) => list.board
-	)
-	lists: List[];
+  @Column('varchar', { array: true, nullable: true })
+  lists: string[];
 }
