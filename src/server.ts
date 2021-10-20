@@ -5,8 +5,8 @@ import env from './config';
 import config from './ormconfig';
 
 createConnection(config)
-  .then(async connection => {
-    await connection.runMigrations();
+  .then(async () => {
+    // await connection.runMigrations();
     console.log('DB connection...');
 
     const { port } = env.app;
