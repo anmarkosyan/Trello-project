@@ -48,7 +48,7 @@ export class CardController {
   }
 
   static async updateCard(req: Request, res: Response) {
-    const { title, description }: ICard = req.body;
+    const { title, description, listId, comments }: ICard = req.body;
     const { id } = req.params;
     const updatedData: ICard = {};
     if (title) {
@@ -56,6 +56,12 @@ export class CardController {
     }
     if (description) {
       updatedData.description = description;
+    }
+    if (listId) {
+      updatedData.listId = listId;
+    }
+    if (comments) {
+      updatedData.comments = comments;
     }
     try {
       const updateData = await manager().updateCard(id, updatedData);
