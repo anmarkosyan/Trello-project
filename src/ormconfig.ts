@@ -19,7 +19,7 @@ const config: ConnectionOptions = {
   entities: [Common, Board, List, Comment, Card],
   synchronize: true,
   migrationsRun: true,
-  extra: { ssl: true, rejectUnauthorized: false },
+  // extra: { ssl: true, rejectUnauthorized: false },
 
   // const config: ConnectionOptions = {
   //     type: 'postgres',
