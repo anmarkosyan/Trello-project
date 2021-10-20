@@ -1,5 +1,18 @@
-import {Router} from 'express';
+/* eslint-disable prettier/prettier */
+import { Router } from 'express';
+import { CommentController } from '../controllers/commentController';
 
-const route = Router();
+const router = Router();
 
-export  {route as commentRoutes};
+router
+  .route('/comments/')
+  .get(CommentController.getAllComments)
+  .post(CommentController.createComment);
+
+router
+  .route('/:id')
+  .get(CommentController.getComment)
+//   .patch(CommentController.updateComment)
+  .delete(CommentController.deleteComment);
+
+export { router as commentRoutes };
