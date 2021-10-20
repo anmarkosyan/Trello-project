@@ -15,6 +15,6 @@ export class Card extends Common {
   })
   list: List;
 
-  @Column('varchar', { array: true, nullable: true })
-  comments: string[];
+  // @Column('varchar', { array: true, nullable: true })
+  // comments: string[];
 }
