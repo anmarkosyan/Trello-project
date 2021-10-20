@@ -1,4 +1,4 @@
 export interface ICard {
   title?: string;
-  lists?: string[];
+  description?: string;
 }
