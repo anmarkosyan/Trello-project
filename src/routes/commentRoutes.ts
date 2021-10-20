@@ -5,14 +5,14 @@ import { CommentController } from '../controllers/commentController';
 const router = Router();
 
 router
-  .route('/comments/')
+  .route('/')
   .get(CommentController.getAllComments)
   .post(CommentController.createComment);
 
 router
   .route('/:id')
   .get(CommentController.getComment)
-//   .patch(CommentController.updateComment)
+  .patch(CommentController.updateComment)
   .delete(CommentController.deleteComment);
 
 export { router as commentRoutes };
