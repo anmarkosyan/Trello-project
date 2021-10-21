@@ -3,6 +3,7 @@ import { getManager } from 'typeorm';
 import { ListRepository } from '../services/list';
 import { List } from '../entities/List';
 import HttpStatusCode from '../enums/HttpStatusCode';
+import { IList } from '../interfaces/list.interface';
 
 export class ListController {
   static async createList(req: Request, res: Response) {
@@ -57,10 +58,20 @@ export class ListController {
 
   static async updateList(req: Request, res: Response) {
     const manager = getManager().getCustomRepository(ListRepository);
-    const { title } = req.body;
+    const { title ,cards,boardId} = req.body;
     const { id } = req.params;
+    const updatedData: IList = {};
+    if (title) {
+      updatedData.title = title;
+    }
+    if (cards) {
+      updatedData.cards = cards;
+    }
+    if (boardId) {
+      updatedData.boardId = boardId;
+    }
     try {
-      const updateData = await manager.updateList(id, title);
+      const updateData = await manager.updateList(id, updatedData);
 
       res.status(HttpStatusCode.SuccessRequest).json(updateData);
     } catch (e) {

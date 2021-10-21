@@ -1,5 +1,6 @@
 import { EntityRepository, Repository } from 'typeorm';
 import { List } from '../entities/List';
+import { IList } from '../interfaces/list.interface';
 
 @EntityRepository(List)
 export class ListRepository extends Repository<List> {
@@ -18,10 +19,10 @@ export class ListRepository extends Repository<List> {
     return this.save(newList);
   }
 
-  updateList(id: string, title: string) {
+  updateList(id: string, list: IList) {
     return this.createQueryBuilder('list')
       .update(List)
-      .set({ title })
+      .set({ ...list })
       .where('list.id = :query', { query: id })
       .execute()
       .then(() => this.findOne(id));
