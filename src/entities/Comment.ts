@@ -5,7 +5,7 @@ import {Card} from './Card';
 @Entity('comment')
 export class Comment extends Common{
 
-    @Column('varchar', { length: 1000, nullable: true })
+    @Column('varchar', { length: 1000 })
     text: string;
 
     @ManyToOne(
