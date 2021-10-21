@@ -7,7 +7,9 @@
     "start": "node ./dist/src/server.js",
     "build": "rm -rf dist && tsc -p .",
     "dev": "nodemon --legacy-watch ./src/server.ts",
-    "generate": "ts-node ./node_modules/typeorm/cli migration:generate -n Test -p"
+    "typeorm:migration:generate": "ts-node ./node_modules/typeorm/cli migration:generate -n",
+    "typeorm:migration:run": "ts-node --transpile-only ./node_modules/typeorm/cli migration:run"
+
   },
   "author": "",
   "license": "ISC",

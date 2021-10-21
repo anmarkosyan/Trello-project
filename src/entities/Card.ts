@@ -1,30 +1,20 @@
-import { Entity,ManyToOne,JoinColumn,Column,OneToMany } from 'typeorm';
-import {Common} from './Common';
-import {List} from './List';
-import {Comment} from './Comment'
+import { Entity, ManyToOne, JoinColumn, Column } from 'typeorm';
+import { Common } from './Common';
+import { List } from './List';
 
 @Entity('card')
-export class Card extends Common{
+export class Card extends Common {
+  @Column('varchar', { length: 200, nullable: true })
+  description: string;
 
-    @Column('varchar', { length: 200 })
-    description: string;
+  @ManyToOne(() => List, list => list.cards, {
+    onDelete: 'CASCADE',
+  })
+  @JoinColumn({
+    name: 'list_id',
+  })
+  list: List;
 
-    @ManyToOne(
-		() => List,
-		(list) => list.cards,
-		{
-			onDelete: 'CASCADE',
-		}
-	)
-	@JoinColumn({
-		name: 'list_id',
-	})
-	list: List;
-
-    @OneToMany(
-		() => Comment,
-		(comment) => comment.card
-	)
-	comments: Comment[];
-
+  @Column('varchar', { array: true, nullable: true })
+  comments: string[];
 }
