@@ -2,7 +2,7 @@ import 'reflect-metadata';
 import { createConnection } from 'typeorm';
 import app from './app';
 import env from './config';
-import config from './ormconfig';
+import config from '../ormconfig';
 
 createConnection(config)
   .then(async () => {
