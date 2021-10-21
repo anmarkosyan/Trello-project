@@ -6,6 +6,9 @@ import { List } from './List';
 export class Card extends Common {
   @Column('varchar', { length: 200, nullable: true })
   description: string;
+  
+  @Column()
+  list_id: string;
 
   @ManyToOne(() => List, list => list.cards, {
     onDelete: 'CASCADE',

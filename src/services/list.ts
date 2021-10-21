@@ -1,4 +1,5 @@
-import { EntityRepository, Repository } from 'typeorm';
+import { EntityRepository, Repository ,getConnection} from 'typeorm';
+import { Board } from '../entities/Board';
 import { List } from '../entities/List';
 import { IList } from '../interfaces/list.interface';
 
@@ -15,8 +16,29 @@ export class ListRepository extends Repository<List> {
       .getOne();
   }
 
-  createList(newList: List) {
-    return this.save(newList);
+  async createList(newList: List) {
+   
+    const connection = getConnection();
+    const queryRunner = connection.createQueryRunner();
+
+    // await queryRunner.connect();
+
+    
+    await queryRunner.startTransaction();
+    try {
+      const list = await queryRunner.manager.save(List, newList);
+      console.log(list);
+      const board = await queryRunner.manager.findOne(Board, {id: list.boardId});
+      console.log(board);
+      const newBoardLists = [...board!.lists, list.id];
+      await queryRunner.manager.update(Board, {id: list.boardId}, {lists: newBoardLists});
+      await queryRunner.commitTransaction();
+      return list;
+    } catch(e) {
+      await queryRunner.rollbackTransaction();
+      console.log(e)
+      throw e;
+    }
   }
 
   updateList(id: string, list: IList) {
@@ -28,11 +50,35 @@ export class ListRepository extends Repository<List> {
       .then(() => this.findOne(id));
   }
 
-  deleteList(id: string) {
-    return this.createQueryBuilder('list')
-      .delete()
-      .from(List)
-      .where('list.id = :query', { query: id })
-      .execute();
+  async deleteList(id: string) {
+    // return this.createQueryBuilder('list')
+    //   .delete()
+    //   .from(List)
+    //   .where('list.id = :query', { query: id })
+    //   .execute();
+
+    const connection = getConnection();
+    const queryRunner = connection.createQueryRunner();
+
+    // await queryRunner.connect();
+
+    
+    await queryRunner.startTransaction();
+    try {
+      const list= await queryRunner.manager.findOne(List, {id:id})
+
+      const board = await queryRunner.manager.findOne(Board, {id:list!.boardId });
+      await queryRunner.manager.delete(List,{ id: id })
+    
+      const newBoardLists = [...board!.lists];
+      newBoardLists.splice(newBoardLists.indexOf(list!.id),1)
+      await queryRunner.manager.update(Board, {id: list!.boardId}, {lists: newBoardLists});
+      await queryRunner.commitTransaction();
+     
+    } catch(e) {
+      await queryRunner.rollbackTransaction();
+      console.log(e)
+      throw e;
+    }
   }
 }

@@ -8,7 +8,7 @@ import { IList } from '../interfaces/list.interface';
 export class ListController {
   static async createList(req: Request, res: Response) {
     const manager = getManager().getCustomRepository(ListRepository);
-    const { title,boardId} = req.body;
+    const { title, boardId} = req.body;
   
 
     try {
