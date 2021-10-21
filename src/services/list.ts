@@ -21,7 +21,7 @@ export class ListRepository extends Repository<List> {
     const connection = getConnection();
     const queryRunner = connection.createQueryRunner();
 
-    // await queryRunner.connect();
+    
 
     
     await queryRunner.startTransaction();
@@ -36,7 +36,6 @@ export class ListRepository extends Repository<List> {
       return list;
     } catch(e) {
       await queryRunner.rollbackTransaction();
-      console.log(e)
       throw e;
     }
   }
@@ -51,18 +50,10 @@ export class ListRepository extends Repository<List> {
   }
 
   async deleteList(id: string) {
-    // return this.createQueryBuilder('list')
-    //   .delete()
-    //   .from(List)
-    //   .where('list.id = :query', { query: id })
-    //   .execute();
-
+  
     const connection = getConnection();
     const queryRunner = connection.createQueryRunner();
-
-    // await queryRunner.connect();
-
-    
+  
     await queryRunner.startTransaction();
     try {
       const list= await queryRunner.manager.findOne(List, {id:id})
@@ -77,7 +68,6 @@ export class ListRepository extends Repository<List> {
      
     } catch(e) {
       await queryRunner.rollbackTransaction();
-      console.log(e)
       throw e;
     }
   }
