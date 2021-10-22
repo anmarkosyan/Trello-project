@@ -21,7 +21,7 @@ export class List extends Common{
 	@JoinColumn({name:"boardId"})
 	board: Board;
 
-	@Column('varchar', { array: true, nullable: true })
+	@Column('varchar', { array: true, default:[] })
 	cards: string[];
   
 }
