@@ -1,10 +1,14 @@
-import { Entity,ManyToOne,JoinColumn,OneToMany } from 'typeorm';
+
+import { Entity,ManyToOne,JoinColumn,Column } from 'typeorm';
 import {Common} from './Common';
 import {Board} from './Board';
-import {Card} from './Card';
+
 
 @Entity('list')
 export class List extends Common{
+
+    @Column()
+    boardId:string;
 
     @ManyToOne(
 		() => Board,
@@ -13,16 +17,11 @@ export class List extends Common{
 			onDelete: 'CASCADE',
 		}
 	)
-	@JoinColumn({
-		name: 'board_Id',
-	})
+
+	@JoinColumn({name:"boardId"})
 	board: Board;
 
-    
-    @OneToMany(
-		() => Card,
-		(card) => card.list
-	)
-	cards: Card[];
-
+	@Column('varchar', { array: true, nullable: true })
+	cards: string[];
+  
 }

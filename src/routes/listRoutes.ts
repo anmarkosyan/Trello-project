@@ -1,5 +1,18 @@
 import {Router} from 'express';
+import { ListController } from '../controllers/listController';
 
-const route = Router();
+const router = Router();
 
-export  {route as listRoutes};
+router
+  .route('/')
+  .get(ListController.getAllLists)
+  .post(ListController.createList);
+
+router
+  .route('/:id')
+  .get(ListController.getList)
+  .patch(ListController.updateList)
+  .delete(ListController.deleteList);
+
+  
+export { router as listRoutes };
