@@ -1,27 +1,23 @@
+import {Entity, ManyToOne, JoinColumn, Column, OneToMany} from 'typeorm';
+import { Common } from './Common';
+import { Board } from './Board';
+import { Card } from './Card';
 
-import { Entity,ManyToOne,JoinColumn,Column } from 'typeorm';
-import {Common} from './Common';
-import {Board} from './Board';
-
-
+// @ts-ignore
 @Entity('list')
-export class List extends Common{
+export class List extends Common {
+  @Column()
+  board_id: string;
 
-    @Column()
-    boardId:string;
+  @ManyToOne(() => Board, board => board.lists, {
+    onDelete: 'CASCADE',
+  })
+  @JoinColumn({ name: 'board_id' })
+  board: Board;
 
-    @ManyToOne(
-		() => Board,
-		(board) => board.lists,
-		{
-			onDelete: 'CASCADE',
-		}
-	)
+  @OneToMany(type => Card, card => card.list_id)
+  cards: Card[];
 
-	@JoinColumn({name:"boardId"})
-	board: Board;
-
-	@Column('varchar', { array: true, default:[] })
-	cards: string[];
-  
+  @Column('varchar', { array: true, default: [] })
+  card_ids: string[];
 }

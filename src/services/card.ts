@@ -15,7 +15,7 @@ export class CardRepository extends Repository<Card> {
       .getOne();
   }
 
-  createCard(newCard: Card) {
+  async createCard(newCard: Card) {
     return this.save(newCard);
   }
 

@@ -1,12 +1,13 @@
-import { Entity, ManyToOne, JoinColumn, Column } from 'typeorm';
+import { Entity, ManyToOne, JoinColumn, Column, OneToMany } from 'typeorm';
 import { Common } from './Common';
 import { List } from './List';
+import { Comment } from './Comment';
 
 @Entity('card')
 export class Card extends Common {
   @Column('varchar', { length: 200, nullable: true })
   description: string;
-  
+
   @Column()
   list_id: string;
 
@@ -18,6 +19,6 @@ export class Card extends Common {
   })
   list: List;
 
-  @Column('varchar', { array: true, nullable: true })
-  comments: string[];
+  @OneToMany((type: Comment) => Comment, comment => comment.cards)
+  comments: Comment[];
 }
