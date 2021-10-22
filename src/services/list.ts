@@ -21,15 +21,10 @@ export class ListRepository extends Repository<List> {
     const connection = getConnection();
     const queryRunner = connection.createQueryRunner();
 
-    
-
-    
     await queryRunner.startTransaction();
     try {
       const list = await queryRunner.manager.save(List, newList);
-      console.log(list);
       const board = await queryRunner.manager.findOne(Board, {id: list.boardId});
-      console.log(board);
       const newBoardLists = [...board!.lists, list.id];
       await queryRunner.manager.update(Board, {id: list.boardId}, {lists: newBoardLists});
       await queryRunner.commitTransaction();
@@ -66,9 +61,9 @@ export class ListRepository extends Repository<List> {
       await queryRunner.manager.update(Board, {id: list!.boardId}, {lists: newBoardLists});
       await queryRunner.commitTransaction();
      
-    } catch(e) {
+    } catch(error) {
       await queryRunner.rollbackTransaction();
-      throw e;
+      throw error;
     }
   }
 }
