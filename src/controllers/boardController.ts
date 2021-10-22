@@ -47,14 +47,14 @@ export class BoardController {
   }
 
   static async updateBoard(req: Request, res: Response) {
-    const { title, lists }: IBoard = req.body;
+    const { title, lists } = req.body;
     const { id } = req.params;
     const updatedData: IBoard = {};
     if (title) {
       updatedData.title = title;
     }
     if (lists) {
-      updatedData.lists = lists;
+      updatedData.list_ids = lists;
     }
     try {
       const updateData = await manager().updateBoard(id, updatedData);

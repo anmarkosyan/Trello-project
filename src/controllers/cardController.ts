@@ -9,13 +9,14 @@ const manager = () => getManager().getCustomRepository(CardRepository);
 
 export class CardController {
   static async createCard(req: Request, res: Response) {
-    const { title, listId } = req.body;
+    const manager1 = getManager().getCustomRepository(CardRepository);
+    const { title, list_id } = req.body;
     try {
       const card = new Card();
       card.title = title;
-      card.list = listId;
+      card.list_id = list_id;
 
-      const cardData = await manager().createCard(card);
+      const cardData = await manager1.createCard(card);
       res.status(HttpStatusCode.CreateRequest).json(cardData);
     } catch (e) {
       res.status(HttpStatusCode.BadRequest).json({
@@ -48,7 +49,7 @@ export class CardController {
   }
 
   static async updateCard(req: Request, res: Response) {
-    const { title, description, listId } = req.body;
+    const { title, description, list_id } = req.body;
     const { id } = req.params;
     const updatedData: ICard = {};
     if (title) {
@@ -57,8 +58,8 @@ export class CardController {
     if (description) {
       updatedData.description = description;
     }
-    if (listId) {
-      updatedData.listId = listId;
+    if (list_id) {
+      updatedData.list_id = list_id;
     }
 
     try {

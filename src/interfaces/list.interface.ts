@@ -1,5 +1,5 @@
 export interface IList {
     title?: string;
-    cards?: string[];
-    boardId?:string;
+    card_ids?: string[];
+    board_id?:string;
   }

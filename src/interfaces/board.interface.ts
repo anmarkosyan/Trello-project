@@ -1,4 +1,4 @@
 export interface IBoard {
   title?: string;
-  lists?: string[];
+  list_ids?: string[];
 }
