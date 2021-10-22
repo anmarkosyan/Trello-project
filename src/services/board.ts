@@ -10,7 +10,7 @@ export class BoardRepository extends Repository<Board> {
 
   getBoard(boardId: string) {
     return this.createQueryBuilder('board')
-      .select()
+      .leftJoinAndSelect('board.lists', 'list')
       .where('board.id = :query', { query: boardId })
       .getOne();
   }

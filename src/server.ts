@@ -6,8 +6,7 @@ import config from '../ormconfig';
 
 createConnection(config)
   .then(async () => {
-    // await connection.runMigrations();
-    console.log('DB connection...');
+      console.log('DB connection...');
 
     const { port } = env.app;
     app.listen(port, () => {

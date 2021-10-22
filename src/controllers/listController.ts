@@ -11,12 +11,12 @@ import { IList } from '../interfaces/list.interface';
 export class ListController {
   static async createList(req: Request, res: Response) {
     const manager = getManager().getCustomRepository(ListRepository);
-    const { title, boardId} = req.body;
+    const { title, boardId } = req.body;
 
     try {
       const list = new List();
       list.title = title;
-      list.boardId=boardId;
+      list.board_id = boardId;
       const listData = await manager.createList(list);
       res.status(HttpStatusCode.CreateRequest).json(listData);
     } catch (e) {
@@ -55,7 +55,7 @@ export class ListController {
 
   static async updateList(req: Request, res: Response) {
     const manager = getManager().getCustomRepository(ListRepository);
-    const { title ,cards} = req.body;
+    const { title, cards } = req.body;
     const { id } = req.params;
     const updatedData: IList = {};
 
@@ -64,7 +64,7 @@ export class ListController {
     }
 
     if (cards) {
-      updatedData.cards = cards;
+      updatedData.card_ids = cards;
     }
 
     try {
@@ -90,4 +90,4 @@ export class ListController {
       });
     }
   }
-} 
+}
