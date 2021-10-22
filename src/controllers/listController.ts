@@ -55,7 +55,7 @@ export class ListController {
 
   static async updateList(req: Request, res: Response) {
     const manager = getManager().getCustomRepository(ListRepository);
-    const { title ,cards,boardId} = req.body;
+    const { title ,cards} = req.body;
     const { id } = req.params;
     const updatedData: IList = {};
 
@@ -65,10 +65,6 @@ export class ListController {
 
     if (cards) {
       updatedData.cards = cards;
-    }
-
-    if (boardId) {
-      updatedData.boardId = boardId;
     }
 
     try {

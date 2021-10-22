@@ -58,7 +58,7 @@ export class ListRepository extends Repository<List> {
     
       const newBoardLists = [...board!.lists];
       newBoardLists.splice(newBoardLists.indexOf(list!.id),1)
-      await queryRunner.manager.update(Board, {id: list!.boardId}, {lists: newBoardLists});
+      await queryRunner.manager.update(Board, {id: board!.id}, {lists: newBoardLists});
       await queryRunner.commitTransaction();
      
     } catch(error) {
