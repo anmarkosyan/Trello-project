@@ -4,6 +4,6 @@ import { Common } from './Common';
 @Entity('board')
 export class Board extends Common {
 
-  @Column('varchar', { array: true, nullable: true })
+  @Column('varchar', { array: true, default: []})
   lists: string[];
 }
