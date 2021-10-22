@@ -9,14 +9,13 @@ const manager = () => getManager().getCustomRepository(CardRepository);
 
 export class CardController {
   static async createCard(req: Request, res: Response) {
-    const manager1 = getManager().getCustomRepository(CardRepository);
     const { title, list_id } = req.body;
     try {
       const card = new Card();
       card.title = title;
       card.list_id = list_id;
 
-      const cardData = await manager1.createCard(card);
+      const cardData = await manager().createCard(card);
       res.status(HttpStatusCode.CreateRequest).json(cardData);
     } catch (e) {
       res.status(HttpStatusCode.BadRequest).json({
