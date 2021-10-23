@@ -1,37 +1,46 @@
 import { EntityRepository, Repository } from 'typeorm';
-import { Card } from '../entities/Card';
+import { CardEntity } from '../entities/Card';
 import { ICard } from '../interfaces/card.interface';
+import { CardInterface } from '../interfaces';
 
-@EntityRepository(Card)
-export class CardRepository extends Repository<Card> {
-  getAllCards() {
+interface newCard {
+  title: string;
+  description?: string;
+  list_id: string;
+}
+
+@EntityRepository(CardEntity)
+export class CardRepository extends Repository<CardEntity> {
+  async getAllCards(): Promise<CardInterface[]> {
     return this.createQueryBuilder('card').getMany();
   }
 
-  getCard(cardId: string) {
-    return this.createQueryBuilder('card')
+  async getCard(cardId: string): Promise<CardInterface|null> {
+    const card = await this.createQueryBuilder('card')
       .select()
       .where('card.id = :query', { query: cardId })
       .getOne();
+    return card || null;
   }
 
-  async createCard(newCard: Card) {
+  async createCard(newCard: newCard): Promise<CardInterface> {
     return this.save(newCard);
   }
 
-  updateCard(id: string, card: ICard) {
-    return this.createQueryBuilder('card')
-      .update(Card)
+  async updateCard(id: string, card: ICard): Promise<CardInterface|null> {
+    const updatedCard = await this.createQueryBuilder('card')
+      .update(CardEntity)
       .set({ ...card })
       .where('card.id = :query', { query: id })
       .execute()
       .then(() => this.findOne(id));
+    return updatedCard || null;
   }
 
-  deleteCard(id: string) {
-    return this.createQueryBuilder('card')
+  async deleteCard(id: string): Promise<void> {
+    await this.createQueryBuilder('card')
       .delete()
-      .from(Card)
+      .from(CardEntity)
       .where('card.id = :query', { query: id })
       .execute();
   }

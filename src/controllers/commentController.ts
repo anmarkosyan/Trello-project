@@ -2,7 +2,7 @@
 import { Request, Response } from 'express';
 import { getManager } from 'typeorm';
 import { CommentRepository } from '../services/comment';
-import { Comment } from '../entities/Comment';
+import { CommentEntity } from '../entities/Comment';
 import HttpStatusCode from '../enums/HttpStatusCode';
 
 const manager = () => getManager().getCustomRepository(CommentRepository);
@@ -11,7 +11,7 @@ export class CommentController {
   static async createComment(req: Request, res: Response) {
     const { text } = req.body;
     try {
-      const comment = new Comment();
+      const comment = new CommentEntity();
       comment.text = text;
 
       const commentData = await manager().createComment(comment);

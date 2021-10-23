@@ -1,12 +1,9 @@
 import { Request, Response } from 'express';
 import { getManager } from 'typeorm';
 import { ListRepository } from '../services/list';
-import { List } from '../entities/List';
+import { ListEntity } from '../entities/List';
 import HttpStatusCode from '../enums/HttpStatusCode';
 import { IList } from '../interfaces/list.interface';
-
-
-
 
 export class ListController {
   static async createList(req: Request, res: Response) {
@@ -14,7 +11,7 @@ export class ListController {
     const { title, boardId } = req.body;
 
     try {
-      const list = new List();
+      const list = new ListEntity();
       list.title = title;
       list.board_id = boardId;
       const listData = await manager.createList(list);
