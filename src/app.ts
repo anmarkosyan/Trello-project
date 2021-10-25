@@ -1,4 +1,4 @@
-import express from 'express';
+import express, { Request, Response, NextFunction } from 'express';
 
 import { boardRoutes } from './routes/boardRoutes';
 import {listRoutes} from './routes/listRoutes';
@@ -13,5 +13,9 @@ app.use('/api/v1/boards', boardRoutes);
 app.use('/api/v1/lists', listRoutes);
 app.use('/api/v1/cards', cardRoutes);
 app.use('/api/v1/comments', commentRoutes);
+
+app.get('/', (req: Request, res: Response, next: NextFunction) => {
+  res.status(200).send('OK');
+});
 
 export default app;
