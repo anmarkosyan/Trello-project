@@ -13,6 +13,7 @@ const config: ConnectionOptions = {
   database: env.db.db,
   synchronize: false,
   migrationsRun: true,
+  extra: { ssl: true, rejectUnauthorized: false },
   entities: [
     path.join(__dirname, `src/entities/**/*.${isCompiled ? 'js' : 'ts'}`),
   ],
