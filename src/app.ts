@@ -15,7 +15,7 @@ app.use('/api/v1/cards', cardRoutes);
 app.use('/api/v1/comments', commentRoutes);
 
 app.get('/', (req: Request, res: Response, next: NextFunction) => {
-  res.status(200).send('OK');
+  res.status(200).send({ status: 'OK' });
 });
 
 export default app;
