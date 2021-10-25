@@ -3,10 +3,10 @@ export default {
     port: process.env.PORT || 8080,
   },
   db: {
-    db: process.env.POSTGRES_DB,
-    user: process.env.POSTGRES_USER || 'postgres',
-    password: process.env.POSTGRES_PASSWORD || 'postgres',
-    port: process.env.POSTGRES_PORT,
-    host: process.env.POSTGRES_HOST,
+    db: process.env.TYPEORM_DATABASE,
+    user: process.env.TYPEORM_USERNAME || 'postgres',
+    password: process.env.TYPEORM_PASSWORD || 'postgres',
+    port: process.env.TYPEORM_PORT,
+    host: process.env.TYPEORM_HOST,
   },
 };
