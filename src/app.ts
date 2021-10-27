@@ -1,4 +1,5 @@
 import express from 'express';
+import cors from 'cors';
 
 import { boardRoutes } from './routes/boardRoutes';
 import {listRoutes} from './routes/listRoutes';
@@ -7,6 +8,8 @@ import {commentRoutes} from './routes/commentRoutes';
 
 
 const app = express();
+
+app.use(cors());
 app.use(express.json());
 
 app.use('/api/v1/boards', boardRoutes);
