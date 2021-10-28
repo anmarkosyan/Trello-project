@@ -11,6 +11,7 @@ export class BoardRepository extends Repository<BoardEntity> {
   async getBoard(boardId: string): Promise<BoardInterface | null> {
     const board = await this.createQueryBuilder('board')
       .leftJoinAndSelect('board.lists', 'list')
+      .leftJoinAndSelect('list.cards', 'card')
       .where('board.id = :query', { query: boardId })
       .getOne();
     return board || null;
