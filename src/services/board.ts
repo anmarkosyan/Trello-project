@@ -8,7 +8,7 @@ export class BoardRepository extends Repository<BoardEntity> {
     return this.createQueryBuilder('board').getMany();
   }
 
-  async getBoard(boardId: string): Promise<BoardInterface| null> {
+  async getBoard(boardId: string): Promise<BoardInterface | null> {
     const board = await this.createQueryBuilder('board')
       .leftJoinAndSelect('board.lists', 'list')
       .where('board.id = :query', { query: boardId })
@@ -16,7 +16,7 @@ export class BoardRepository extends Repository<BoardEntity> {
     return board || null;
   }
 
-  async createBoard(newBoard: {title: string } ): Promise<BoardInterface> {
+  async createBoard(newBoard: { title: string }): Promise<BoardInterface> {
     return this.save(newBoard);
   }
 

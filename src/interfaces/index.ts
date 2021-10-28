@@ -7,9 +7,14 @@ import { CommentEntityInterface, CommentInterface } from './CommentEntity';
 
 export {
   IBoard,
-  CommonEntityInterface, CommonInterface,
-  BoardEntityInterface, BoardInterface,
-  ListEntityInterface, ListInterface,
-  CardEntityInterface, CardInterface,
-  CommentEntityInterface, CommentInterface,
-}
+  CommonEntityInterface,
+  CommonInterface,
+  BoardEntityInterface,
+  BoardInterface,
+  ListEntityInterface,
+  ListInterface,
+  CardEntityInterface,
+  CardInterface,
+  CommentEntityInterface,
+  CommentInterface,
+};

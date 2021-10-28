@@ -5,18 +5,17 @@ import {
   BaseEntity,
   PrimaryGeneratedColumn,
   CreateDateColumn,
-  UpdateDateColumn
+  UpdateDateColumn,
 } from 'typeorm';
 import { ListEntity } from './List';
 import { BoardEntityInterface, ListEntityInterface } from '../interfaces';
 
 @Entity('board')
 export class BoardEntity extends BaseEntity implements BoardEntityInterface {
-
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column('varchar', { length: 100, nullable: true })
+  @Column('varchar', { length: 100 })
   title: string;
 
   @CreateDateColumn()
@@ -25,7 +24,7 @@ export class BoardEntity extends BaseEntity implements BoardEntityInterface {
   @UpdateDateColumn()
   updated_at: Date;
 
-  @OneToMany(type => ListEntity, list => list.board_id)
+  @OneToMany(type => ListEntity, list => list.board)
   lists: ListEntityInterface[];
 
   @Column('varchar', { array: true, default: [] })

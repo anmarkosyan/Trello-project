@@ -1,4 +1,4 @@
-import {Router} from 'express';
+import { Router } from 'express';
 import { ListController } from '../controllers/listController';
 
 const router = Router();
@@ -14,5 +14,4 @@ router
   .patch(ListController.updateList)
   .delete(ListController.deleteList);
 
-  
 export { router as listRoutes };

@@ -6,24 +6,23 @@ import {
   OneToMany,
   BaseEntity,
   PrimaryGeneratedColumn,
-  CreateDateColumn, UpdateDateColumn
+  CreateDateColumn,
+  UpdateDateColumn,
 } from 'typeorm';
 import {
   BoardEntityInterface,
   CardEntityInterface,
-  ListEntityInterface
+  ListEntityInterface,
 } from '../interfaces';
 import { BoardEntity } from './Board';
 import { CardEntity } from './Card';
 
-
 @Entity('list')
 export class ListEntity extends BaseEntity implements ListEntityInterface {
-
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column('varchar', { length: 100, nullable: true })
+  @Column('varchar', { length: 100 })
   title: string;
 
   @CreateDateColumn()
@@ -38,11 +37,10 @@ export class ListEntity extends BaseEntity implements ListEntityInterface {
   @ManyToOne(() => BoardEntity, board => board.lists, {
     onDelete: 'CASCADE',
   })
-
   @JoinColumn({ name: 'board_id' })
   board: BoardEntityInterface;
 
-  @OneToMany(type => CardEntity, card => card.list_id)
+  @OneToMany(type => CardEntity, card => card.list)
   cards: CardEntityInterface[];
 
   @Column('varchar', { array: true, default: [] })

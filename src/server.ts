@@ -7,9 +7,9 @@ import config from '../ormconfig';
 (async () => {
   try {
     await createConnection(config);
-  } catch(e) {
+  } catch (e) {
     console.error('💥 ERROR: Database connection failed!!', e);
-    process.exit(1)
+    process.exit(1);
   }
   console.log('DB connection...');
   const { port } = env.app;

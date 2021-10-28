@@ -6,7 +6,8 @@ import {
   OneToMany,
   BaseEntity,
   PrimaryGeneratedColumn,
-  CreateDateColumn, UpdateDateColumn
+  CreateDateColumn,
+  UpdateDateColumn,
 } from 'typeorm';
 import { ListEntity } from './List';
 import { CardEntityInterface, CommentEntityInterface } from '../interfaces';
@@ -14,11 +15,10 @@ import { CommentEntity } from './Comment';
 
 @Entity('card')
 export class CardEntity extends BaseEntity implements CardEntityInterface {
-
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column('varchar', { length: 100, nullable: true })
+  @Column('varchar', { length: 100 })
   title: string;
 
   @CreateDateColumn()
@@ -41,6 +41,9 @@ export class CardEntity extends BaseEntity implements CardEntityInterface {
   })
   list: ListEntity;
 
-  @OneToMany((type: CommentEntityInterface) => CommentEntity, comment => comment.card_id)
+  @OneToMany(
+    (type: CommentEntityInterface) => CommentEntity,
+    comment => comment.card
+  )
   comments: CommentEntityInterface[];
 }

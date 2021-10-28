@@ -6,19 +6,18 @@ import {
   BaseEntity,
   PrimaryGeneratedColumn,
   CreateDateColumn,
-  UpdateDateColumn
+  UpdateDateColumn,
 } from 'typeorm';
 import { CardEntity } from './Card';
 import { CardEntityInterface, CommentEntityInterface } from '../interfaces';
 
 @Entity('comment')
-export class CommentEntity extends BaseEntity implements CommentEntityInterface {
-
+export class CommentEntity
+  extends BaseEntity
+  implements CommentEntityInterface
+{
   @PrimaryGeneratedColumn('uuid')
   id: string;
-
-  @Column('varchar', { length: 100, nullable: true })
-  title: string;
 
   @CreateDateColumn()
   created_at: Date;

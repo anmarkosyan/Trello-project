@@ -1,4 +1,3 @@
-/* eslint-disable prettier/prettier */
 import { Request, Response } from 'express';
 import { getManager } from 'typeorm';
 import { CommentRepository } from '../services/comment';
@@ -9,10 +8,11 @@ const manager = () => getManager().getCustomRepository(CommentRepository);
 
 export class CommentController {
   static async createComment(req: Request, res: Response) {
-    const { text } = req.body;
+    const { text, card_id } = req.body;
     try {
       const comment = new CommentEntity();
       comment.text = text;
+      comment.card_id = card_id;
 
       const commentData = await manager().createComment(comment);
       res.status(HttpStatusCode.CreateRequest).json(commentData);

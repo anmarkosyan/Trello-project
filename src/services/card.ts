@@ -15,7 +15,7 @@ export class CardRepository extends Repository<CardEntity> {
     return this.createQueryBuilder('card').getMany();
   }
 
-  async getCard(cardId: string): Promise<CardInterface|null> {
+  async getCard(cardId: string): Promise<CardInterface | null> {
     const card = await this.createQueryBuilder('card')
       .select()
       .where('card.id = :query', { query: cardId })
@@ -27,7 +27,7 @@ export class CardRepository extends Repository<CardEntity> {
     return this.save(newCard);
   }
 
-  async updateCard(id: string, card: ICard): Promise<CardInterface|null> {
+  async updateCard(id: string, card: ICard): Promise<CardInterface | null> {
     const updatedCard = await this.createQueryBuilder('card')
       .update(CardEntity)
       .set({ ...card })
