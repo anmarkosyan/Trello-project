@@ -9,11 +9,12 @@
     "dev": "nodemon --legacy-watch ./src/server.ts",
     "typeorm:migration:generate": "ts-node ./node_modules/typeorm/cli migration:generate -n",
     "typeorm:migration:run": "ts-node --transpile-only ./node_modules/typeorm/cli migration:run"
-
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@types/cors": "^2.8.12",
+    "cors": "^2.8.5",
     "express": "^4.17.1",
     "pg": "^8.7.1",
     "reflect-metadata": "^0.1.13",
