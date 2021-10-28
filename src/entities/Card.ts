@@ -1,24 +1,49 @@
-import { Entity, ManyToOne, JoinColumn, Column, OneToMany } from 'typeorm';
-import { Common } from './Common';
-import { List } from './List';
-import { Comment } from './Comment';
+import {
+  Entity,
+  ManyToOne,
+  JoinColumn,
+  Column,
+  OneToMany,
+  BaseEntity,
+  PrimaryGeneratedColumn,
+  CreateDateColumn,
+  UpdateDateColumn,
+} from 'typeorm';
+import { ListEntity } from './List';
+import { CardEntityInterface, CommentEntityInterface } from '../interfaces';
+import { CommentEntity } from './Comment';
 
 @Entity('card')
-export class Card extends Common {
+export class CardEntity extends BaseEntity implements CardEntityInterface {
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
+
+  @Column('varchar', { length: 100 })
+  title: string;
+
+  @CreateDateColumn()
+  created_at: Date;
+
+  @UpdateDateColumn()
+  updated_at: Date;
+
   @Column('varchar', { length: 200, nullable: true })
   description: string;
 
   @Column()
   list_id: string;
 
-  @ManyToOne(() => List, list => list.cards, {
+  @ManyToOne(() => ListEntity, list => list.cards, {
     onDelete: 'CASCADE',
   })
   @JoinColumn({
     name: 'list_id',
   })
-  list: List;
+  list: ListEntity;
 
-  @OneToMany((type: Comment) => Comment, comment => comment.cards)
-  comments: Comment[];
+  @OneToMany(
+    (type: CommentEntityInterface) => CommentEntity,
+    comment => comment.card
+  )
+  comments: CommentEntityInterface[];
 }

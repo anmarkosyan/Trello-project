@@ -15,6 +15,7 @@
     "import/no-unresolved": "off",
     "import/prefer-default-export": "off",
     "no-shadow": "off",
+    "camelcase": "off",
     "@typescript-eslint/no-shadow": ["error"],
     "@typescript-eslint/no-unused-vars": "error",
     "@typescript-eslint/no-explicit-any": "error",

@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { getManager } from 'typeorm';
 import HttpStatusCode from '../enums/HttpStatusCode';
-import { Card } from '../entities/Card';
+import { CardEntity } from '../entities/Card';
 import { CardRepository } from '../services/card';
 import { ICard } from '../interfaces/card.interface';
 
@@ -11,7 +11,7 @@ export class CardController {
   static async createCard(req: Request, res: Response) {
     const { title, list_id } = req.body;
     try {
-      const card = new Card();
+      const card = new CardEntity();
       card.title = title;
       card.list_id = list_id;
 

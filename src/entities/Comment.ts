@@ -1,20 +1,41 @@
-import { Entity, ManyToOne, JoinColumn, Column } from 'typeorm';
-import { Common } from './Common';
-import { Card } from './Card';
+import {
+  Entity,
+  ManyToOne,
+  JoinColumn,
+  Column,
+  BaseEntity,
+  PrimaryGeneratedColumn,
+  CreateDateColumn,
+  UpdateDateColumn,
+} from 'typeorm';
+import { CardEntity } from './Card';
+import { CardEntityInterface, CommentEntityInterface } from '../interfaces';
 
 @Entity('comment')
-export class Comment extends Common {
+export class CommentEntity
+  extends BaseEntity
+  implements CommentEntityInterface
+{
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
+
+  @CreateDateColumn()
+  created_at: Date;
+
+  @UpdateDateColumn()
+  updated_at: Date;
+
   @Column('varchar', { length: 1000 })
   text: string;
 
   @Column()
   card_id: string;
 
-  @ManyToOne(() => Card, card => card.comments, {
+  @ManyToOne(() => CardEntity, card => card.comments, {
     onDelete: 'CASCADE',
   })
   @JoinColumn({
     name: 'card_id',
   })
-  cards: Card;
+  card: CardEntityInterface;
 }

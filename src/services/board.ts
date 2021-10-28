@@ -1,37 +1,39 @@
 import { EntityRepository, Repository } from 'typeorm';
-import { Board } from '../entities/Board';
-import { IBoard } from '../interfaces';
+import { BoardEntity } from '../entities/Board';
+import { BoardInterface, IBoard } from '../interfaces';
 
-@EntityRepository(Board)
-export class BoardRepository extends Repository<Board> {
-  getAllBoards() {
+@EntityRepository(BoardEntity)
+export class BoardRepository extends Repository<BoardEntity> {
+  async getAllBoards(): Promise<BoardInterface[]> {
     return this.createQueryBuilder('board').getMany();
   }
 
-  getBoard(boardId: string) {
-    return this.createQueryBuilder('board')
+  async getBoard(boardId: string): Promise<BoardInterface | null> {
+    const board = await this.createQueryBuilder('board')
       .leftJoinAndSelect('board.lists', 'list')
       .where('board.id = :query', { query: boardId })
       .getOne();
+    return board || null;
   }
 
-  createBoard(newBoard: Board) {
+  async createBoard(newBoard: { title: string }): Promise<BoardInterface> {
     return this.save(newBoard);
   }
 
-  updateBoard(id: string, board: IBoard) {
-    return this.createQueryBuilder('board')
-      .update(Board)
+  async updateBoard(id: string, board: IBoard): Promise<BoardInterface | null> {
+    const updatedBoard = await this.createQueryBuilder('board')
+      .update(BoardEntity)
       .set({ ...board })
       .where('board.id = :query', { query: id })
       .execute()
       .then(() => this.findOne(id));
+    return updatedBoard || null;
   }
 
-  deleteBoard(id: string) {
-    return this.createQueryBuilder('board')
+  async deleteBoard(id: string): Promise<void> {
+    await this.createQueryBuilder('board')
       .delete()
-      .from(Board)
+      .from(BoardEntity)
       .where('board.id = :query', { query: id })
       .execute();
   }
