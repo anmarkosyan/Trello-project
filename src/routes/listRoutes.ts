@@ -6,7 +6,8 @@ const router = Router();
 router
   .route('/')
   .get(ListController.getAllLists)
-  .post(ListController.createList);
+  .post(ListController.createList)
+  .put(ListController.updateCardsLists);
 
 router
   .route('/:id')

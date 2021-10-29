@@ -71,6 +71,20 @@ export class ListController {
     }
   }
 
+  static async updateCardsLists(req: Request, res: Response) {
+    const manager = getManager().getCustomRepository(ListRepository);
+    const { cardId, listId, data }  = req.body;
+
+    try {
+      const updateData = await manager.updateCardsLists(cardId, listId, data);
+      res.status(HttpStatusCode.SuccessRequest).json(updateData);
+    } catch (e) { 
+      res.status(HttpStatusCode.BadRequest).json({
+        message: 'Something went wrong!!',
+      });
+    }
+  }
+
   static async deleteList(req: Request, res: Response) {
     const { id } = req.params;
 
