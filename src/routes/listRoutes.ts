@@ -1,4 +1,4 @@
-import {Router} from 'express';
+import { Router } from 'express';
 import { ListController } from '../controllers/listController';
 
 const router = Router();
@@ -6,7 +6,8 @@ const router = Router();
 router
   .route('/')
   .get(ListController.getAllLists)
-  .post(ListController.createList);
+  .post(ListController.createList)
+  .put(ListController.updateCardsLists);
 
 router
   .route('/:id')
@@ -14,5 +15,4 @@ router
   .patch(ListController.updateList)
   .delete(ListController.deleteList);
 
-  
 export { router as listRoutes };

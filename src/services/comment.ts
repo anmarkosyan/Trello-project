@@ -1,9 +1,15 @@
 /* eslint-disable prettier/prettier */
 import { EntityRepository, Repository } from 'typeorm';
-import { Comment } from '../entities/Comment';
+import { CommentEntity } from '../entities/Comment';
 
-@EntityRepository(Comment)
-export class CommentRepository extends Repository<Comment> {
+
+interface newComment {
+  text: string;
+  card_id: string;
+}
+
+@EntityRepository(CommentEntity)
+export class CommentRepository extends Repository<CommentEntity> {
   getAllComments() {
     return this.createQueryBuilder('comment').getMany();
   }
@@ -15,13 +21,13 @@ export class CommentRepository extends Repository<Comment> {
       .getOne();
   }
 
-  createComment(newComment: Comment) {
+  createComment(newComment: newComment) {
     return this.save(newComment);
   }
 
   updateComment(id: string, text: string) {
     return this.createQueryBuilder('comment')
-      .update(Comment)
+      .update(CommentEntity)
       .set({ text })
       .where('comment.id = :query', { query: id })
       .execute()

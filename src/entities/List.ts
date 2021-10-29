@@ -1,22 +1,47 @@
-import {Entity, ManyToOne, JoinColumn, Column, OneToMany} from 'typeorm';
-import { Common } from './Common';
-import { Board } from './Board';
-import { Card } from './Card';
+import {
+  Entity,
+  ManyToOne,
+  JoinColumn,
+  Column,
+  OneToMany,
+  BaseEntity,
+  PrimaryGeneratedColumn,
+  CreateDateColumn,
+  UpdateDateColumn,
+} from 'typeorm';
+import {
+  BoardEntityInterface,
+  CardEntityInterface,
+  ListEntityInterface,
+} from '../interfaces';
+import { BoardEntity } from './Board';
+import { CardEntity } from './Card';
 
-// @ts-ignore
 @Entity('list')
-export class List extends Common {
+export class ListEntity extends BaseEntity implements ListEntityInterface {
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
+
+  @Column('varchar', { length: 100 })
+  title: string;
+
+  @CreateDateColumn()
+  created_at: Date;
+
+  @UpdateDateColumn()
+  updated_at: Date;
+
   @Column()
   board_id: string;
 
-  @ManyToOne(() => Board, board => board.lists, {
+  @ManyToOne(() => BoardEntity, board => board.lists, {
     onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'board_id' })
-  board: Board;
+  board: BoardEntityInterface;
 
-  @OneToMany(type => Card, card => card.list_id)
-  cards: Card[];
+  @OneToMany(type => CardEntity, card => card.list)
+  cards: CardEntityInterface[];
 
   @Column('varchar', { array: true, default: [] })
   card_ids: string[];

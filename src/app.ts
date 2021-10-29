@@ -3,9 +3,10 @@ import cors from 'cors';
 import express, { Request, Response, NextFunction } from 'express';
 
 import { boardRoutes } from './routes/boardRoutes';
-import {listRoutes} from './routes/listRoutes';
-import {cardRoutes} from './routes/cardRoutes';
-import {commentRoutes} from './routes/commentRoutes';
+import { listRoutes } from './routes/listRoutes';
+import { cardRoutes } from './routes/cardRoutes';
+import { commentRoutes } from './routes/commentRoutes';
+
 
 const app = express();
 

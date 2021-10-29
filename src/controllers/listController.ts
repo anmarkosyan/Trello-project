@@ -1,23 +1,21 @@
 import { Request, Response } from 'express';
 import { getManager } from 'typeorm';
 import { ListRepository } from '../services/list';
-import { List } from '../entities/List';
+import { ListEntity } from '../entities/List';
 import HttpStatusCode from '../enums/HttpStatusCode';
 import { IList } from '../interfaces/list.interface';
 
-
-
+const manager = () => getManager().getCustomRepository(ListRepository);
 
 export class ListController {
   static async createList(req: Request, res: Response) {
-    const manager = getManager().getCustomRepository(ListRepository);
     const { title, boardId } = req.body;
 
     try {
-      const list = new List();
+      const list = new ListEntity();
       list.title = title;
       list.board_id = boardId;
-      const listData = await manager.createList(list);
+      const listData = await manager().createList(list);
       res.status(HttpStatusCode.CreateRequest).json(listData);
     } catch (e) {
       res.status(HttpStatusCode.BadRequest).json({
@@ -27,10 +25,8 @@ export class ListController {
   }
 
   static async getAllLists(req: Request, res: Response) {
-    const manager = getManager().getCustomRepository(ListRepository);
-
     try {
-      const data = await manager.getAllLists();
+      const data = await manager().getAllLists();
       res.status(HttpStatusCode.SuccessRequest).json(data);
     } catch (e) {
       res.status(HttpStatusCode.BadRequest).json({
@@ -40,11 +36,10 @@ export class ListController {
   }
 
   static async getList(req: Request, res: Response) {
-    const manager = getManager().getCustomRepository(ListRepository);
     const { id } = req.params;
 
     try {
-      const oneData = await manager.getList(id);
+      const oneData = await manager().getList(id);
       res.status(HttpStatusCode.SuccessRequest).json(oneData);
     } catch (e) {
       res.status(HttpStatusCode.BadRequest).json({
@@ -54,7 +49,6 @@ export class ListController {
   }
 
   static async updateList(req: Request, res: Response) {
-    const manager = getManager().getCustomRepository(ListRepository);
     const { title, cards } = req.body;
     const { id } = req.params;
     const updatedData: IList = {};
@@ -68,7 +62,7 @@ export class ListController {
     }
 
     try {
-      const updateData = await manager.updateList(id, updatedData);
+      const updateData = await manager().updateList(id, updatedData);
       res.status(HttpStatusCode.SuccessRequest).json(updateData);
     } catch (e) {
       res.status(HttpStatusCode.BadRequest).json({
@@ -77,12 +71,25 @@ export class ListController {
     }
   }
 
-  static async deleteList(req: Request, res: Response) {
+  static async updateCardsLists(req: Request, res: Response) {
     const manager = getManager().getCustomRepository(ListRepository);
+    const { cardId, listId, data }  = req.body;
+
+    try {
+      const updateData = await manager.updateCardsLists(cardId, listId, data);
+      res.status(HttpStatusCode.SuccessRequest).json(updateData);
+    } catch (e) { 
+      res.status(HttpStatusCode.BadRequest).json({
+        message: 'Something went wrong!!',
+      });
+    }
+  }
+
+  static async deleteList(req: Request, res: Response) {
     const { id } = req.params;
 
     try {
-      await manager.deleteList(id);
+      await manager().deleteList(id);
       res.status(HttpStatusCode.SuccessRequest).end();
     } catch (e) {
       res.status(HttpStatusCode.BadRequest).json({
