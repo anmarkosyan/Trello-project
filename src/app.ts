@@ -1,4 +1,3 @@
-import express from 'express';
 import cors from 'cors';
 import express, { Request, Response, NextFunction } from 'express';
 
@@ -10,9 +9,7 @@ import { commentRoutes } from './routes/commentRoutes';
 
 const app = express();
 
-app.use(cors({
-  origin: "*"
-}));
+app.use(cors());
 app.use(express.json());
 
 app.use('/api/v1/boards', boardRoutes);
