@@ -2,33 +2,48 @@ import { Request, Response, NextFunction } from 'express';
 import { Exception } from '../exceptions/exceptions';
 import ExceptionMessages from '../exceptions/messages';
 
-import StatusCode from '../exceptions/statusCodes'
+import StatusCode from '../exceptions/statusCodes';
 
-const responseJsonHandler = (error: Exception | null, result: any, out: Response) => {
-    let response;
-    if (error) {
-        if (error.message && error.code) {
-            response = error;
-        } else {
-            response = new Exception(StatusCode.InternalServerError, ExceptionMessages.INTERNAL);
-        }
+const responseJsonHandler = (
+  error: Exception | null,
+  result: any,
+  out: Response
+) => {
+  let response;
+  if (error) {
+    if (error.message && error.code) {
+      response = error;
     } else {
-        response = result;
+      response = new Exception(
+        StatusCode.InternalServerError,
+        ExceptionMessages.INTERNAL
+      );
     }
-    out.json(response);
+  } else {
+    response = result;
+  }
+  out.json(response);
 };
 
-
-const routeHandler = (callback: any) => {
-    return async (req: Request, res: Response, next: NextFunction) => {
-        try {
-            responseJsonHandler(null, await callback(req, res, next), res);
-        } catch (err: any) {
-            responseJsonHandler(err, null, res);
-        }
+export const routeHandler =
+  (callback: any) =>
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      responseJsonHandler(null, await callback(req, res, next), res);
+    } catch (err: any) {
+      responseJsonHandler(err, null, res);
     }
+  };
 
+export const errorHandler = (
+  err: Exception,
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  err.code = err.code || 500;
 
-}
-
-export default routeHandler;
+  res.status(err.code).json({
+    message: err.message,
+  });
+};
