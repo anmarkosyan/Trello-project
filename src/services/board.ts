@@ -1,11 +1,24 @@
 import { EntityRepository, Repository } from 'typeorm';
 import { BoardEntity } from '../entities/Board';
 import { BoardInterface, IBoard } from '../interfaces';
+import  { Exception}  from '../exceptions/exceptions';
+import ExceptionMessages from '../exceptions/messages';
+import StatusCode from '../exceptions/statusCodes';
 
 @EntityRepository(BoardEntity)
 export class BoardRepository extends Repository<BoardEntity> {
+
+  async createBoard(newBoard: { title: string }): Promise<BoardInterface> {
+     return await  this.save(newBoard);
+  }
+
   async getAllBoards(): Promise<BoardInterface[]> {
-    return this.createQueryBuilder('board').getMany();
+    const boards= await this.createQueryBuilder('board').getMany()
+    .catch(() => {
+      throw new Exception(StatusCode.BadRequest, ExceptionMessages.INTERNAL)
+    });
+
+    return boards ;
   }
 
   async getBoard(boardId: string): Promise<BoardInterface | null> {
@@ -13,13 +26,14 @@ export class BoardRepository extends Repository<BoardEntity> {
       .leftJoinAndSelect('board.lists', 'list')
       .leftJoinAndSelect('list.cards', 'card')
       .where('board.id = :query', { query: boardId })
-      .getOne();
+      .getOne()
+      .catch(() => {
+              throw new Exception(StatusCode.BadRequest, ExceptionMessages.NOT_FOUND.BOARD)
+            })
     return board || null;
   }
 
-  async createBoard(newBoard: { title: string }): Promise<BoardInterface> {
-    return this.save(newBoard);
-  }
+ 
 
   async updateBoard(id: string, board: IBoard): Promise<BoardInterface | null> {
     const updatedBoard = await this.createQueryBuilder('board')
@@ -27,7 +41,11 @@ export class BoardRepository extends Repository<BoardEntity> {
       .set({ ...board })
       .where('board.id = :query', { query: id })
       .execute()
-      .then(() => this.findOne(id));
+      .then(() => this.findOne(id))
+      .catch(() => {
+        throw new Exception(StatusCode.BadRequest, ExceptionMessages.INVALID.INPUT)
+      });
+  ;
     return updatedBoard || null;
   }
 
@@ -36,6 +54,9 @@ export class BoardRepository extends Repository<BoardEntity> {
       .delete()
       .from(BoardEntity)
       .where('board.id = :query', { query: id })
-      .execute();
+      .execute() 
+      .catch(() => {
+        throw new Exception(StatusCode.BadRequest, ExceptionMessages.NOT_FOUND.BOARD)
+      });
   }
 }

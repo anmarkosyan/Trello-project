@@ -3,6 +3,9 @@ import { BoardEntity } from '../entities/Board';
 import { ListEntity } from '../entities/List';
 import { CardEntity } from '../entities/Card';
 import { IList } from '../interfaces/list.interface';
+import { Exception } from '../exceptions/exceptions';
+import ExceptionMessages from '../exceptions/messages';
+import StatusCode from '../exceptions/statusCodes';
 
 interface newList {
   title: string;
@@ -11,16 +14,6 @@ interface newList {
 
 @EntityRepository(ListEntity)
 export class ListRepository extends Repository<ListEntity> {
-  getAllLists() {
-    return this.createQueryBuilder('list').getMany();
-  }
-
-  getList(listId: string) {
-    return this.createQueryBuilder('list')
-      .select()
-      .where('list.id = :query', { query: listId })
-      .getOne();
-  }
 
   async createList(newList: newList) {
     const connection = getConnection();
@@ -31,7 +24,7 @@ export class ListRepository extends Repository<ListEntity> {
       const list = await queryRunner.manager.save(ListEntity, newList);
       const board = await queryRunner.manager.findOne(BoardEntity, {
         id: list.board_id,
-      });
+      })
       const newBoardLists = [...board!.list_ids, list.id];
       await queryRunner.manager.update(
         BoardEntity,
@@ -40,19 +33,44 @@ export class ListRepository extends Repository<ListEntity> {
       );
       await queryRunner.commitTransaction();
       return list;
-    } catch (e) {
+    } catch {
       await queryRunner.rollbackTransaction();
-      throw e;
+      throw new Exception(StatusCode.BadRequest, ExceptionMessages.NOT_FOUND.LIST);
     }
   }
 
-  updateList(id: string, list: IList) {
-    return this.createQueryBuilder('list')
+  async getAllLists() {
+    const lists = await this.createQueryBuilder('list').getMany()
+      .catch(() => {
+        throw new Exception(StatusCode.BadRequest, ExceptionMessages.INTERNAL)
+      });
+    return lists
+  }
+
+  async getList(listId: string) {
+    const list = await this.createQueryBuilder('list')
+      .select()
+      .where('list.id = :query', { query: listId })
+      .getOne()
+      .catch(() => {
+        throw new Exception(StatusCode.BadRequest, ExceptionMessages.NOT_FOUND.LIST)
+      });
+    return list
+  }
+
+
+
+  async updateList(id: string, list: IList) {
+    const updatedList = await this.createQueryBuilder('list')
       .update(ListEntity)
       .set({ ...list })
       .where('list.id = :query', { query: id })
       .execute()
-      .then(() => this.findOne(id));
+      .then(() => this.findOne(id))
+      .catch(() => {
+        throw new Exception(StatusCode.BadRequest, ExceptionMessages.INVALID.INPUT)
+      });
+    return updatedList
   }
 
   async updateCardsLists(cardId: string, listId: string, data: any[]) {
@@ -80,16 +98,16 @@ export class ListRepository extends Repository<ListEntity> {
       await queryRunner.manager.update(
         CardEntity,
         cardId,
-        { list_id:  listId},
+        { list_id: listId },
       );
 
       await queryRunner.manager.save(ListEntity, listsArray);
       await queryRunner.commitTransaction();
       return await queryRunner.manager.findByIds(ListEntity, listIds);;
 
-    } catch (e) {
+    } catch {
       await queryRunner.rollbackTransaction();
-      throw e;
+      throw new Exception(StatusCode.BadRequest, ExceptionMessages.INVALID.INPUT)
     }
   }
 
@@ -114,9 +132,10 @@ export class ListRepository extends Repository<ListEntity> {
         { list_ids: newBoardLists }
       );
       await queryRunner.commitTransaction();
-    } catch (error) {
+    } catch {
       await queryRunner.rollbackTransaction();
-      throw error;
+      throw new Exception(StatusCode.BadRequest, ExceptionMessages.NOT_FOUND.LIST)
+
     }
   }
 }
