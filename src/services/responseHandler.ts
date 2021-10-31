@@ -22,7 +22,7 @@ const responseJsonHandler = (
   } else {
     response = result;
   }
-  out.json(response);
+  out.status(response.code).json(response.message);
 };
 
 export const routeHandler =
