@@ -4,48 +4,37 @@ import { ListRepository } from '../services/list';
 import { ListEntity } from '../entities/List';
 import HttpStatusCode from '../enums/HttpStatusCode';
 import { IList } from '../interfaces/list.interface';
+import { Exception } from '../exceptions/exceptions';
+import ExceptionMessages from '../exceptions/messages';
+import StatusCode from '../exceptions/statusCodes';
 
 const manager = () => getManager().getCustomRepository(ListRepository);
 
 export class ListController {
   static async createList(req: Request, res: Response) {
     const { title, boardId } = req.body;
-
-    try {
-      const list = new ListEntity();
-      list.title = title;
-      list.board_id = boardId;
-      const listData = await manager().createList(list);
-      res.status(HttpStatusCode.CreateRequest).json(listData);
-    } catch (e) {
-      res.status(HttpStatusCode.BadRequest).json({
-        message: 'Something went wrong!!',
-      });
+    const list = new ListEntity();
+    if (!title || title.trim() === "") {
+      throw new Exception(StatusCode.BadRequest, ExceptionMessages.INVALID.TITLE);
     }
+    list.title = title;
+    list.board_id = boardId;
+    const listData = await manager().createList(list);
+    res.status(HttpStatusCode.CreateRequest).json(listData);
+
   }
 
   static async getAllLists(req: Request, res: Response) {
-    try {
-      const data = await manager().getAllLists();
-      res.status(HttpStatusCode.SuccessRequest).json(data);
-    } catch (e) {
-      res.status(HttpStatusCode.BadRequest).json({
-        message: 'Something went wrong!!',
-      });
-    }
+    const data = await manager().getAllLists();
+    res.status(HttpStatusCode.SuccessRequest).json(data);
+
   }
 
   static async getList(req: Request, res: Response) {
     const { id } = req.params;
+    const oneData = await manager().getList(id);
+    res.status(HttpStatusCode.SuccessRequest).json(oneData);
 
-    try {
-      const oneData = await manager().getList(id);
-      res.status(HttpStatusCode.SuccessRequest).json(oneData);
-    } catch (e) {
-      res.status(HttpStatusCode.BadRequest).json({
-        message: 'Something went wrong!!',
-      });
-    }
   }
 
   static async updateList(req: Request, res: Response) {
@@ -73,12 +62,12 @@ export class ListController {
 
   static async updateCardsLists(req: Request, res: Response) {
     const manager = getManager().getCustomRepository(ListRepository);
-    const { cardId, listId, data }  = req.body;
+    const { cardId, listId, data } = req.body;
 
     try {
       const updateData = await manager.updateCardsLists(cardId, listId, data);
       res.status(HttpStatusCode.SuccessRequest).json(updateData);
-    } catch (e) { 
+    } catch (e) {
       res.status(HttpStatusCode.BadRequest).json({
         message: 'Something went wrong!!',
       });
@@ -87,14 +76,10 @@ export class ListController {
 
   static async deleteList(req: Request, res: Response) {
     const { id } = req.params;
+    await manager().deleteList(id);
+    res.status(HttpStatusCode.SuccessRequest).json({
+      message: 'List successfully deleted.',
+    });
 
-    try {
-      await manager().deleteList(id);
-      res.status(HttpStatusCode.SuccessRequest).end();
-    } catch (e) {
-      res.status(HttpStatusCode.BadRequest).json({
-        message: 'Something went wrong!!',
-      });
-    }
   }
 }

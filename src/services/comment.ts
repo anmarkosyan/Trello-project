@@ -1,6 +1,9 @@
 /* eslint-disable prettier/prettier */
 import { EntityRepository, Repository } from 'typeorm';
 import { CommentEntity } from '../entities/Comment';
+import { Exception } from '../exceptions/exceptions';
+import ExceptionMessages from '../exceptions/messages';
+import StatusCode from '../exceptions/statusCodes';
 
 
 interface newComment {
@@ -10,22 +13,33 @@ interface newComment {
 
 @EntityRepository(CommentEntity)
 export class CommentRepository extends Repository<CommentEntity> {
-  getAllComments() {
-    return this.createQueryBuilder('comment').getMany();
+
+  async createComment(newComment: newComment) {
+    return await this.save(newComment);
   }
 
-  getComment(commentId: string) {
-    return this.createQueryBuilder('comment')
+  async getAllComments() {
+    const comments = await this.createQueryBuilder('comment').getMany()
+    .catch(() => {
+      throw new Exception(StatusCode.BadRequest, ExceptionMessages.INTERNAL)
+    });
+    return comments
+  }
+
+  async getComment(commentId: string) {
+    const comment= await this.createQueryBuilder('comment')
       .select()
       .where('comment.id = :query', { query: commentId })
-      .getOne();
+      .getOne()
+      .catch(() => {
+        throw new Exception(StatusCode.BadRequest, ExceptionMessages.NOT_FOUND.COMMENT)
+      });
+      return comment
   }
 
-  createComment(newComment: newComment) {
-    return this.save(newComment);
-  }
 
-  updateComment(id: string, text: string) {
+
+  async updateComment(id: string, text: string) {
     return this.createQueryBuilder('comment')
       .update(CommentEntity)
       .set({ text })
@@ -34,11 +48,14 @@ export class CommentRepository extends Repository<CommentEntity> {
       .then(() => this.findOne(id));
   }
 
-  deleteComment(id: string) {
-    return this.createQueryBuilder('comment')
+  async deleteComment(id: string) {
+    await this.createQueryBuilder('comment')
       .delete()
-      .from(Comment)
+      .from(CommentEntity)
       .where('comment.id = :query', { query: id })
-      .execute();
+      .execute()
+      .catch(() => {
+        throw new Exception(StatusCode.BadRequest, ExceptionMessages.NOT_FOUND.COMMENT)
+      });
   }
 }
