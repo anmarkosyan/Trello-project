@@ -43,7 +43,7 @@ export class BoardRepository extends Repository<BoardEntity> {
       .execute()
       .then(() => this.findOne(id))
       .catch(() => {
-        throw new Exception(StatusCode.BadRequest, ExceptionMessages.INTERNAL)
+        throw new Exception(StatusCode.BadRequest, ExceptionMessages.INVALID.INPUT)
       });
   ;
     return updatedBoard || null;

@@ -4,6 +4,7 @@ import { CommentEntity } from '../entities/Comment';
 import { Exception } from '../exceptions/exceptions';
 import ExceptionMessages from '../exceptions/messages';
 import StatusCode from '../exceptions/statusCodes';
+import { IComment } from '../interfaces/comment.interface';
 
 
 interface newComment {
@@ -39,13 +40,18 @@ export class CommentRepository extends Repository<CommentEntity> {
 
 
 
-  async updateComment(id: string, text: string) {
-    return this.createQueryBuilder('comment')
+  async updateComment(id: string, text: IComment) {
+    const updatedComment= await  this.createQueryBuilder('comment')
       .update(CommentEntity)
-      .set({ text })
+      .set({ ...text })
       .where('comment.id = :query', { query: id })
       .execute()
-      .then(() => this.findOne(id));
+      .then(() => this.findOne(id))
+      .catch(() => {
+        throw new Exception(StatusCode.BadRequest, ExceptionMessages.INVALID.INPUT)
+      });
+
+      return updatedComment 
   }
 
   async deleteComment(id: string) {

@@ -18,6 +18,7 @@ const ExceptionMessages = {
         TITLE: 'Title is not valid',
         LISTS:'not valid input for lists',
         TEXT:'not valid input for comment',
+        INPUT:'not valid input'
         
     },
     INCORRECT: {

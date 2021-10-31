@@ -15,7 +15,7 @@ const responseJsonHandler = (error: Exception | null, result: any, out: Response
     } else {
         response = result;
     }
-    out.json(response);
+    out.status(response.code).json(response.message);
 };
 
 

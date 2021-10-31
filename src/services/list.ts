@@ -3,7 +3,7 @@ import { BoardEntity } from '../entities/Board';
 import { ListEntity } from '../entities/List';
 import { CardEntity } from '../entities/Card';
 import { IList } from '../interfaces/list.interface';
-import  { Exception}  from '../exceptions/exceptions';
+import { Exception } from '../exceptions/exceptions';
 import ExceptionMessages from '../exceptions/messages';
 import StatusCode from '../exceptions/statusCodes';
 
@@ -41,32 +41,36 @@ export class ListRepository extends Repository<ListEntity> {
 
   async getAllLists() {
     const lists = await this.createQueryBuilder('list').getMany()
-    .catch(() => {
-      throw new Exception(StatusCode.BadRequest, ExceptionMessages.INTERNAL)
-    });
+      .catch(() => {
+        throw new Exception(StatusCode.BadRequest, ExceptionMessages.INTERNAL)
+      });
     return lists
   }
 
   async getList(listId: string) {
-    const list= await  this.createQueryBuilder('list')
+    const list = await this.createQueryBuilder('list')
       .select()
       .where('list.id = :query', { query: listId })
       .getOne()
       .catch(() => {
         throw new Exception(StatusCode.BadRequest, ExceptionMessages.NOT_FOUND.LIST)
       });
-      return list
+    return list
   }
 
 
 
   async updateList(id: string, list: IList) {
-    return await this.createQueryBuilder('list')
+    const updatedList = await this.createQueryBuilder('list')
       .update(ListEntity)
       .set({ ...list })
       .where('list.id = :query', { query: id })
       .execute()
-      .then(() => this.findOne(id));
+      .then(() => this.findOne(id))
+      .catch(() => {
+        throw new Exception(StatusCode.BadRequest, ExceptionMessages.INVALID.INPUT)
+      });
+    return updatedList
   }
 
   async updateCardsLists(cardId: string, listId: string, data: any[]) {
@@ -94,16 +98,16 @@ export class ListRepository extends Repository<ListEntity> {
       await queryRunner.manager.update(
         CardEntity,
         cardId,
-        { list_id:  listId},
+        { list_id: listId },
       );
 
       await queryRunner.manager.save(ListEntity, listsArray);
       await queryRunner.commitTransaction();
       return await queryRunner.manager.findByIds(ListEntity, listIds);;
 
-    } catch (e) {
+    } catch {
       await queryRunner.rollbackTransaction();
-      throw e;
+      throw new Exception(StatusCode.BadRequest, ExceptionMessages.INVALID.INPUT)
     }
   }
 
@@ -131,7 +135,7 @@ export class ListRepository extends Repository<ListEntity> {
     } catch {
       await queryRunner.rollbackTransaction();
       throw new Exception(StatusCode.BadRequest, ExceptionMessages.NOT_FOUND.LIST)
-      
+
     }
   }
 }

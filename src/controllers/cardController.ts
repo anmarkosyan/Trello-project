@@ -1,6 +1,5 @@
 import { Request, Response } from 'express';
 import { getManager } from 'typeorm';
-import HttpStatusCode from '../enums/HttpStatusCode';
 import { CardEntity } from '../entities/Card';
 import { CardRepository } from '../services/card';
 import { ICard } from '../interfaces/card.interface';
@@ -21,20 +20,20 @@ export class CardController {
     card.title = title;
     card.list_id = list_id;
     const cardData = await manager().createCard(card);
-    res.status(HttpStatusCode.CreateRequest).json(cardData);
+    res.status(StatusCode.CreateRequest).json(cardData);
 
   }
 
   static async getAllCards(req: Request, res: Response) {
     const data = await manager().getAllCards();
-    res.status(HttpStatusCode.SuccessRequest).json(data);
+    res.status(StatusCode.SuccessRequest).json(data);
 
   }
 
   static async getCard(req: Request, res: Response) {
     const { id } = req.params;
     const oneData = await manager().getCard(id);
-    res.status(HttpStatusCode.SuccessRequest).json(oneData);
+    res.status(StatusCode.SuccessRequest).json(oneData);
 
   }
 
@@ -42,7 +41,7 @@ export class CardController {
     const { title, description, list_id } = req.body;
     const { id } = req.params;
     const updatedData: ICard = {};
-    if (title) {
+    if (title && title.trim()) {
       updatedData.title = title;
     }
     if (description) {
@@ -52,20 +51,15 @@ export class CardController {
       updatedData.list_id = list_id;
     }
 
-    try {
-      const updateData = await manager().updateCard(id, updatedData);
-      res.status(HttpStatusCode.SuccessRequest).json(updateData);
-    } catch (e) {
-      res.status(HttpStatusCode.BadRequest).json({
-        message: 'Something went wrong!!',
-      });
-    }
+    const updateData = await manager().updateCard(id, updatedData);
+    res.status(StatusCode.SuccessRequest).json(updateData);
+
   }
 
   static async deleteCard(req: Request, res: Response) {
     const { id } = req.params;
     await manager().deleteCard(id);
-    res.status(HttpStatusCode.SuccessRequest).json({
+    res.status(StatusCode.SuccessRequest).json({
       message: 'Card successfully deleted.',
     });
   }
