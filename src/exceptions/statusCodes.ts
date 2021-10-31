@@ -1,4 +1,4 @@
-enum HttpStatusCode {
+enum StatusCode {
   SuccessRequest = 200,
   CreateRequest = 201,
   NoContent = 204,
@@ -13,4 +13,4 @@ enum HttpStatusCode {
   GatewayTimeout = 504,
 }
 
-export default HttpStatusCode;
+export default StatusCode;
