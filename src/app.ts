@@ -16,14 +16,14 @@ app.use(cors());
 app.use(express.json());
 app.use(compression());
 
+app.get('/', (req: Request, res: Response, next: NextFunction) => {
+  res.status(200).send({ status: 'OK' });
+});
+
 app.use('/api/v1/boards', boardRoutes);
 app.use('/api/v1/lists', listRoutes);
 app.use('/api/v1/cards', cardRoutes);
 app.use('/api/v1/comments', commentRoutes);
-
-app.get('/', (req: Request, res: Response, next: NextFunction) => {
-  res.status(200).send({ status: 'OK' });
-});
 
 app.all('*', (req, res, next) => {
   next(

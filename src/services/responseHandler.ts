@@ -47,3 +47,4 @@ export const errorHandler = (
     message: err.message,
   });
 };
+
