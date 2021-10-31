@@ -14,6 +14,7 @@ interface newList {
 
 @EntityRepository(ListEntity)
 export class ListRepository extends Repository<ListEntity> {
+
   async createList(newList: newList) {
     const connection = getConnection();
     const queryRunner = connection.createQueryRunner();
@@ -23,7 +24,7 @@ export class ListRepository extends Repository<ListEntity> {
       const list = await queryRunner.manager.save(ListEntity, newList);
       const board = await queryRunner.manager.findOne(BoardEntity, {
         id: list.board_id,
-      });
+      })
       const newBoardLists = [...board!.list_ids, list.id];
       await queryRunner.manager.update(
         BoardEntity,
@@ -34,20 +35,16 @@ export class ListRepository extends Repository<ListEntity> {
       return list;
     } catch {
       await queryRunner.rollbackTransaction();
-      throw new Exception(
-        StatusCode.BadRequest,
-        ExceptionMessages.NOT_FOUND.LIST
-      );
+      throw new Exception(StatusCode.BadRequest, ExceptionMessages.NOT_FOUND.LIST);
     }
   }
 
   async getAllLists() {
-    const lists = await this.createQueryBuilder('list')
-      .getMany()
+    const lists = await this.createQueryBuilder('list').getMany()
       .catch(() => {
-        throw new Exception(StatusCode.BadRequest, ExceptionMessages.INTERNAL);
+        throw new Exception(StatusCode.BadRequest, ExceptionMessages.INTERNAL)
       });
-    return lists;
+    return lists
   }
 
   async getList(listId: string) {
@@ -56,25 +53,31 @@ export class ListRepository extends Repository<ListEntity> {
       .where('list.id = :query', { query: listId })
       .getOne()
       .catch(() => {
-        throw new Exception(
-          StatusCode.BadRequest,
-          ExceptionMessages.NOT_FOUND.LIST
-        );
+        throw new Exception(StatusCode.BadRequest, ExceptionMessages.NOT_FOUND.LIST)
       });
-    return list;
+    return list
   }
 
+
+
   async updateList(id: string, list: IList) {
-    return await this.createQueryBuilder('list')
+    const updatedList = await this.createQueryBuilder('list')
       .update(ListEntity)
       .set({ ...list })
       .where('list.id = :query', { query: id })
       .execute()
-      .then(() => this.findOne(id));
+      .then(() => this.findOne(id))
+      .catch(() => {
+        throw new Exception(StatusCode.BadRequest, ExceptionMessages.INVALID.INPUT)
+      });
+    return updatedList
   }
 
   async updateCardsLists(cardId: string, listId: string, data: any[]) {
-    const listIds = data.map(list => list.list_id);
+
+    const listIds = data.map((list) => {
+      return list.list_id;
+    });
 
     const connection = getConnection();
     const queryRunner = connection.createQueryRunner();
@@ -82,25 +85,29 @@ export class ListRepository extends Repository<ListEntity> {
     await queryRunner.startTransaction();
 
     try {
-      const listsArray = await queryRunner.manager.findByIds(
-        ListEntity,
-        listIds
-      );
+      const listsArray = await queryRunner.manager.findByIds(ListEntity, listIds);
 
       for (const list of listsArray) {
-        const listData = data.find(item => list.id === item.list_id);
+        const listData = data.find((item) => {
+          return list.id === item.list_id;
+        });
 
         list.card_ids = listData.card_ids;
       }
 
-      await queryRunner.manager.update(CardEntity, cardId, { list_id: listId });
+      await queryRunner.manager.update(
+        CardEntity,
+        cardId,
+        { list_id: listId },
+      );
 
       await queryRunner.manager.save(ListEntity, listsArray);
       await queryRunner.commitTransaction();
-      return await queryRunner.manager.findByIds(ListEntity, listIds);
-    } catch (e) {
+      return await queryRunner.manager.findByIds(ListEntity, listIds);;
+
+    } catch {
       await queryRunner.rollbackTransaction();
-      throw e;
+      throw new Exception(StatusCode.BadRequest, ExceptionMessages.INVALID.INPUT)
     }
   }
 
@@ -127,10 +134,8 @@ export class ListRepository extends Repository<ListEntity> {
       await queryRunner.commitTransaction();
     } catch {
       await queryRunner.rollbackTransaction();
-      throw new Exception(
-        StatusCode.BadRequest,
-        ExceptionMessages.NOT_FOUND.LIST
-      );
+      throw new Exception(StatusCode.BadRequest, ExceptionMessages.NOT_FOUND.LIST)
+
     }
   }
 }

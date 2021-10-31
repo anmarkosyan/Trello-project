@@ -13,27 +13,27 @@ export class ListController {
   static async createList(req: Request, res: Response) {
     const { title, boardId } = req.body;
     const list = new ListEntity();
-    if (!title || title.trim() === '') {
-      throw new Exception(
-        StatusCode.BadRequest,
-        ExceptionMessages.INVALID.TITLE
-      );
+    if (!title || title.trim() === "") {
+      throw new Exception(StatusCode.BadRequest, ExceptionMessages.INVALID.TITLE);
     }
     list.title = title;
     list.board_id = boardId;
     const listData = await manager().createList(list);
     res.status(StatusCode.CreateRequest).json(listData);
+
   }
 
   static async getAllLists(req: Request, res: Response) {
     const data = await manager().getAllLists();
     res.status(StatusCode.SuccessRequest).json(data);
+
   }
 
   static async getList(req: Request, res: Response) {
     const { id } = req.params;
     const oneData = await manager().getList(id);
     res.status(StatusCode.SuccessRequest).json(oneData);
+
   }
 
   static async updateList(req: Request, res: Response) {
@@ -41,7 +41,7 @@ export class ListController {
     const { id } = req.params;
     const updatedData: IList = {};
 
-    if (title) {
+    if (title && title.trim()) {
       updatedData.title = title;
     }
 
@@ -49,27 +49,19 @@ export class ListController {
       updatedData.card_ids = cards;
     }
 
-    try {
-      const updateData = await manager().updateList(id, updatedData);
-      res.status(StatusCode.SuccessRequest).json(updateData);
-    } catch (e) {
-      res.status(StatusCode.BadRequest).json({
-        message: 'Something went wrong!!',
-      });
-    }
+    const updateData = await manager().updateList(id, updatedData);
+    res.status(StatusCode.SuccessRequest).json(updateData);
+
+
   }
 
   static async updateCardsLists(req: Request, res: Response) {
+    const manager = getManager().getCustomRepository(ListRepository);
     const { cardId, listId, data } = req.body;
 
-    try {
-      const updateData = await manager().updateCardsLists(cardId, listId, data);
-      res.status(StatusCode.SuccessRequest).json(updateData);
-    } catch (e) {
-      res.status(StatusCode.BadRequest).json({
-        message: 'Something went wrong!!',
-      });
-    }
+    const updateData = await manager.updateCardsLists(cardId, listId, data);
+    res.status(StatusCode.SuccessRequest).json(updateData);
+
   }
 
   static async deleteList(req: Request, res: Response) {
@@ -78,5 +70,6 @@ export class ListController {
     res.status(StatusCode.SuccessRequest).json({
       message: 'List successfully deleted.',
     });
+
   }
 }

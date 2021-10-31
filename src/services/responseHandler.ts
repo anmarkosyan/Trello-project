@@ -19,6 +19,7 @@ const responseJsonHandler = (
         ExceptionMessages.INTERNAL
       );
     }
+
   } else {
     response = result;
   }

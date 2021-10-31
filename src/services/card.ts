@@ -71,7 +71,10 @@ export class CardRepository extends Repository<CardEntity> {
       .set({ ...card })
       .where('card.id = :query', { query: id })
       .execute()
-      .then(() => this.findOne(id));
+      .then(() => this.findOne(id))
+      .catch(() => {
+        throw new Exception(StatusCode.BadRequest, ExceptionMessages.INVALID.INPUT)
+      });
     return updatedCard || null;
   }
 
