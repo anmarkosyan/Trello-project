@@ -1,4 +1,3 @@
-/* eslint-disable prettier/prettier */
 import { EntityRepository, Repository } from 'typeorm';
 import { CommentEntity } from '../entities/Comment';
 import { Exception } from '../exceptions/exceptions';

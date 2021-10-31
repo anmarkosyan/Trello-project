@@ -15,7 +15,6 @@ interface newCard {
 
 @EntityRepository(CardEntity)
 export class CardRepository extends Repository<CardEntity> {
-
   async createCard(newCard: newCard): Promise<CardInterface> {
     const connection = getConnection();
     const queryRunner = connection.createQueryRunner();
@@ -36,16 +35,20 @@ export class CardRepository extends Repository<CardEntity> {
       return card;
     } catch {
       await queryRunner.rollbackTransaction();
-      throw new Exception(StatusCode.BadRequest, ExceptionMessages.NOT_FOUND.LIST);
+      throw new Exception(
+        StatusCode.BadRequest,
+        ExceptionMessages.NOT_FOUND.LIST
+      );
     }
   }
 
   async getAllCards(): Promise<CardInterface[]> {
-    const cards = await this.createQueryBuilder('card').getMany()
+    const cards = await this.createQueryBuilder('card')
+      .getMany()
       .catch(() => {
-        throw new Exception(StatusCode.BadRequest, ExceptionMessages.INTERNAL)
+        throw new Exception(StatusCode.BadRequest, ExceptionMessages.INTERNAL);
       });
-    return cards
+    return cards;
   }
 
   async getCard(cardId: string): Promise<CardInterface | null> {
@@ -54,11 +57,13 @@ export class CardRepository extends Repository<CardEntity> {
       .where('card.id = :query', { query: cardId })
       .getOne()
       .catch(() => {
-        throw new Exception(StatusCode.BadRequest, ExceptionMessages.NOT_FOUND.CARD)
+        throw new Exception(
+          StatusCode.BadRequest,
+          ExceptionMessages.NOT_FOUND.CARD
+        );
       });
     return card || null;
   }
-
 
   async updateCard(id: string, card: ICard): Promise<CardInterface | null> {
     const updatedCard = await this.createQueryBuilder('card')
@@ -95,7 +100,10 @@ export class CardRepository extends Repository<CardEntity> {
       await queryRunner.commitTransaction();
     } catch {
       await queryRunner.rollbackTransaction();
-      throw new Exception(StatusCode.BadRequest, ExceptionMessages.NOT_FOUND.CARD)
+      throw new Exception(
+        StatusCode.BadRequest,
+        ExceptionMessages.NOT_FOUND.CARD
+      );
     }
   }
 }
