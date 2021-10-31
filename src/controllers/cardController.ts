@@ -1,6 +1,5 @@
 import { Request, Response } from 'express';
 import { getManager } from 'typeorm';
-import HttpStatusCode from '../enums/HttpStatusCode';
 import { CardEntity } from '../entities/Card';
 import { CardRepository } from '../services/card';
 import { ICard } from '../interfaces/card.interface';
@@ -11,31 +10,30 @@ import StatusCode from '../exceptions/statusCodes';
 const manager = () => getManager().getCustomRepository(CardRepository);
 
 export class CardController {
-
   static async createCard(req: Request, res: Response) {
     const { title, list_id } = req.body;
     const card = new CardEntity();
-    if (!title || title.trim() === "") {
-      throw new Exception(StatusCode.BadRequest, ExceptionMessages.INVALID.TITLE);
+    if (!title || title.trim() === '') {
+      throw new Exception(
+        StatusCode.BadRequest,
+        ExceptionMessages.INVALID.TITLE
+      );
     }
     card.title = title;
     card.list_id = list_id;
     const cardData = await manager().createCard(card);
-    res.status(HttpStatusCode.CreateRequest).json(cardData);
-
+    res.status(StatusCode.CreateRequest).json(cardData);
   }
 
   static async getAllCards(req: Request, res: Response) {
     const data = await manager().getAllCards();
-    res.status(HttpStatusCode.SuccessRequest).json(data);
-
+    res.status(StatusCode.SuccessRequest).json(data);
   }
 
   static async getCard(req: Request, res: Response) {
     const { id } = req.params;
     const oneData = await manager().getCard(id);
-    res.status(HttpStatusCode.SuccessRequest).json(oneData);
-
+    res.status(StatusCode.SuccessRequest).json(oneData);
   }
 
   static async updateCard(req: Request, res: Response) {
@@ -54,9 +52,9 @@ export class CardController {
 
     try {
       const updateData = await manager().updateCard(id, updatedData);
-      res.status(HttpStatusCode.SuccessRequest).json(updateData);
+      res.status(StatusCode.SuccessRequest).json(updateData);
     } catch (e) {
-      res.status(HttpStatusCode.BadRequest).json({
+      res.status(StatusCode.BadRequest).json({
         message: 'Something went wrong!!',
       });
     }
@@ -65,7 +63,7 @@ export class CardController {
   static async deleteCard(req: Request, res: Response) {
     const { id } = req.params;
     await manager().deleteCard(id);
-    res.status(HttpStatusCode.SuccessRequest).json({
+    res.status(StatusCode.SuccessRequest).json({
       message: 'Card successfully deleted.',
     });
   }
