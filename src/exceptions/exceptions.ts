@@ -1,12 +1,13 @@
 class Exception extends Error {
-  code: number;
+  statusCode: number;
 
-  constructor(code: number, message: string) {
-    super();
+  message: string;
 
-    this.code = code;
+  constructor(statusCode: number, message: string) {
+    super(message);
+    this.statusCode = statusCode;
     this.message = message;
   }
 }
 
-export { Exception };
+export default Exception;
