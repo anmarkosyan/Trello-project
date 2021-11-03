@@ -5,7 +5,8 @@ import { BoardInterface, IBoard } from '../interfaces';
 @EntityRepository(BoardEntity)
 export class BoardRepository extends Repository<BoardEntity> {
   async getAllBoards(): Promise<BoardInterface[]> {
-    return this.createQueryBuilder('board').getMany();
+    const data = await this.createQueryBuilder('board').getMany();
+    return data;
   }
 
   async getBoard(boardId: string): Promise<BoardInterface | null> {
@@ -18,7 +19,8 @@ export class BoardRepository extends Repository<BoardEntity> {
   }
 
   async createBoard(newBoard: { title: string }): Promise<BoardInterface> {
-    return this.save(newBoard);
+    const data = await this.save(newBoard);
+    return data;
   }
 
   async updateBoard(id: string, board: IBoard): Promise<BoardInterface | null> {
