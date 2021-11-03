@@ -24,7 +24,7 @@ export class ListController {
       }
       list.title = title;
       list.board_id = boardId;
-      const listData: ListInterface = await manager().createList(list);
+      const listData = await manager().createList(list);
       res.status(StatusCode.CreateRequest).json(listData);
     } catch (e) {
       next(HttpErr.internalServerError(ExceptionMessages.INVALID.INPUT));
@@ -107,6 +107,13 @@ export class ListController {
   static async deleteList(req: Request, res: Response, next: NextFunction) {
     try {
       const { id } = req.params;
+      if (
+        !id.match(
+          '^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$'
+        )
+      ) {
+        return next(HttpErr.badRequest(ExceptionMessages.INVALID.ID));
+      }
       await manager().deleteList(id);
       res.status(StatusCode.SuccessRequest).json({
         message: 'List successfully deleted.',

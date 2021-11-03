@@ -1,9 +1,7 @@
-import { EntityRepository, Repository, getConnection } from 'typeorm';
+import { EntityRepository, Repository } from 'typeorm';
 import { ICard, CardInterface } from '../interfaces';
 import { CardEntity } from '../entities/Card';
 import { ListEntity } from '../entities/List';
-import { HttpErr } from '../exceptions/HttpError';
-import ExceptionMessages from "../exceptions/messages";
 
 interface newCard {
   title: string;
@@ -13,28 +11,20 @@ interface newCard {
 
 @EntityRepository(CardEntity)
 export class CardRepository extends Repository<CardEntity> {
-  async createCard(newCard: newCard): Promise<CardInterface> {
-    const connection = getConnection();
-    const queryRunner = connection.createQueryRunner();
+  async createCard(newCard: newCard): Promise<CardInterface | null> {
+    const card = await this.save(newCard);
+    const list = await ListEntity.createQueryBuilder('list')
+      .select()
+      .where('list.id = :query', { query: card.list_id })
+      .getOne();
+    const newLists = [...list!.card_ids, card.id];
+    await ListEntity.createQueryBuilder('list')
+      .update(ListEntity)
+      .set({ card_ids: newLists })
+      .where('list.id = :query', { query: card.list_id })
+      .execute();
 
-    await queryRunner.startTransaction();
-    try {
-      const card = await queryRunner.manager.save(CardEntity, newCard);
-      const list = await queryRunner.manager.findOne(ListEntity, {
-        id: card.list_id,
-      });
-      const newLists = [...list!.card_ids, card.id];
-      await queryRunner.manager.update(
-        ListEntity,
-        { id: card.list_id },
-        { card_ids: newLists }
-      );
-      await queryRunner.commitTransaction();
-      return card;
-    } catch {
-      await queryRunner.rollbackTransaction();
-      throw HttpErr.internalServerError(ExceptionMessages.INTERNAL);
-    }
+    return card || null;
   }
 
   async getAllCards(): Promise<CardInterface[]> {
@@ -61,28 +51,25 @@ export class CardRepository extends Repository<CardEntity> {
   }
 
   async deleteCard(id: string): Promise<void> {
-    const connection = getConnection();
-    const queryRunner = connection.createQueryRunner();
+    const cardData = await this.findOne(id);
+    await this.createQueryBuilder('card')
+      .delete()
+      .from(CardEntity)
+      .where('card.id = :query', { query: id })
+      .execute();
 
-    await queryRunner.startTransaction();
-    try {
-      const card = await queryRunner.manager.findOne(CardEntity, { id });
-      const list = await queryRunner.manager.findOne(ListEntity, {
-        id: card!.list_id,
-      });
-      await queryRunner.manager.delete(CardEntity, { id });
+    const list = await ListEntity.createQueryBuilder('list')
+      .select()
+      .where('list.id = :query', { query: cardData!.list_id })
+      .getOne();
 
-      const newLists = [...list!.card_ids];
-      newLists.splice(newLists.indexOf(card!.id), 1);
-      await queryRunner.manager.update(
-        ListEntity,
-        { id: list!.id },
-        { card_ids: newLists }
-      );
-      await queryRunner.commitTransaction();
-    } catch {
-      await queryRunner.rollbackTransaction();
-      throw HttpErr.internalServerError(ExceptionMessages.INTERNAL);
-    }
+    const newData = [...list!.card_ids];
+    newData.splice(newData.indexOf(cardData!.id), 1);
+
+    await ListEntity.createQueryBuilder('list')
+      .update(ListEntity)
+      .set({ card_ids: newData })
+      .where('list.id = :query', { query: cardData!.list_id })
+      .execute();
   }
 }
