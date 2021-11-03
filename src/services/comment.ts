@@ -1,10 +1,6 @@
 import { EntityRepository, Repository } from 'typeorm';
 import { CommentEntity } from '../entities/Comment';
-import { Exception } from '../exceptions/exceptions';
-import ExceptionMessages from '../exceptions/messages';
-import StatusCode from '../exceptions/statusCodes';
-import { IComment } from '../interfaces/comment.interface';
-
+import { IComment, CommentInterface } from '../interfaces';
 
 interface newComment {
   text: string;
@@ -13,54 +9,46 @@ interface newComment {
 
 @EntityRepository(CommentEntity)
 export class CommentRepository extends Repository<CommentEntity> {
-
-  async createComment(newComment: newComment) {
+  async createComment(newComment: newComment): Promise<CommentInterface> {
     return await this.save(newComment);
   }
 
-  async getAllComments() {
-    const comments = await this.createQueryBuilder('comment').getMany()
-    .catch(() => {
-      throw new Exception(StatusCode.BadRequest, ExceptionMessages.INTERNAL)
-    });
-    return comments
+  async getAllComments(): Promise<CommentInterface[]> {
+    const comments = await this.createQueryBuilder('comment').getMany();
+    return comments;
   }
 
-  async getComment(commentId: string) {
-    const comment= await this.createQueryBuilder('comment')
+  async getComment(commentId: string): Promise<CommentInterface | null> {
+    const comment = await this.createQueryBuilder('comment')
       .select()
       .where('comment.id = :query', { query: commentId })
-      .getOne()
-      .catch(() => {
-        throw new Exception(StatusCode.BadRequest, ExceptionMessages.NOT_FOUND.COMMENT)
-      });
-      return comment
+      .getOne();
+
+    return comment || null;
   }
 
-
-
-  async updateComment(id: string, text: IComment) {
-    const updatedComment= await  this.createQueryBuilder('comment')
+  async updateComment(
+    id: string,
+    text: IComment
+  ): Promise<CommentInterface | null> {
+    const updatedComment = await this.createQueryBuilder('comment')
       .update(CommentEntity)
       .set({ ...text })
       .where('comment.id = :query', { query: id })
       .execute()
-      .then(() => this.findOne(id))
-      .catch(() => {
-        throw new Exception(StatusCode.BadRequest, ExceptionMessages.INVALID.INPUT)
-      });
+      .then(() => this.findOne(id));
 
-      return updatedComment 
+    return updatedComment || null;
   }
 
-  async deleteComment(id: string) {
+  async deleteComment(id: string): Promise<CommentInterface | null> {
+    const data = await this.findOne(id);
     await this.createQueryBuilder('comment')
       .delete()
       .from(CommentEntity)
       .where('comment.id = :query', { query: id })
-      .execute()
-      .catch(() => {
-        throw new Exception(StatusCode.BadRequest, ExceptionMessages.NOT_FOUND.COMMENT)
-      });
+      .execute();
+
+    return data || null;
   }
 }
