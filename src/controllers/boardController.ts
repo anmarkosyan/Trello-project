@@ -46,7 +46,7 @@ export class BoardController {
       }
       const oneData = await manager().getBoard(id);
       if (!oneData) {
-        return next(HttpErr.notFound('board not found'));
+        return next(HttpErr.notFound(ExceptionMessages.NOT_FOUND.BOARD));
       }
       res.status(StatusCode.SuccessRequest).json(oneData);
     } catch (err) {
@@ -90,7 +90,7 @@ export class BoardController {
           '^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$'
         )
       ) {
-        return next(HttpErr.notFound('wrong id'));
+        return next(HttpErr.badRequest(ExceptionMessages.INVALID.ID));
       }
       const data = await manager().deleteBoard(id);
       if (!data) {

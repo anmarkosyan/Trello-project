@@ -1,75 +1,118 @@
-import { Request, Response } from 'express';
+import { Request, Response, NextFunction } from 'express';
 import { getManager } from 'typeorm';
 import { ListRepository } from '../services/list';
 import { ListEntity } from '../entities/List';
-import { IList } from '../interfaces/list.interface';
-import { Exception } from '../exceptions/exceptions';
-import ExceptionMessages from '../exceptions/messages';
+import {
+  ListEntityInterface,
+  ListInterface,
+  IList,
+  IBoard,
+} from '../interfaces';
 import StatusCode from '../exceptions/statusCodes';
+import { HttpErr } from '../exceptions/HttpError';
+import ExceptionMessages from '../exceptions/messages';
 
 const manager = () => getManager().getCustomRepository(ListRepository);
 
 export class ListController {
-  static async createList(req: Request, res: Response) {
-    const { title, boardId } = req.body;
-    const list = new ListEntity();
-    if (!title || title.trim() === "") {
-      throw new Exception(StatusCode.BadRequest, ExceptionMessages.INVALID.TITLE);
+  static async createList(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { title, boardId } = req.body;
+      const list: ListEntityInterface = new ListEntity();
+      if (!title || title.trim() === '') {
+        return next(HttpErr.badRequest(ExceptionMessages.INVALID.TITLE));
+      }
+      list.title = title;
+      list.board_id = boardId;
+      const listData: ListInterface = await manager().createList(list);
+      res.status(StatusCode.CreateRequest).json(listData);
+    } catch (e) {
+      next(HttpErr.internalServerError(ExceptionMessages.INVALID.INPUT));
     }
-    list.title = title;
-    list.board_id = boardId;
-    const listData = await manager().createList(list);
-    res.status(StatusCode.CreateRequest).json(listData);
-
   }
 
-  static async getAllLists(req: Request, res: Response) {
-    const data = await manager().getAllLists();
-    res.status(StatusCode.SuccessRequest).json(data);
-
+  static async getAllLists(req: Request, res: Response, next: NextFunction) {
+    try {
+      const data: ListInterface[] = await manager().getAllLists();
+      res.status(StatusCode.SuccessRequest).json(data);
+    } catch (e) {
+      next(HttpErr.internalServerError(ExceptionMessages.INTERNAL));
+    }
   }
 
-  static async getList(req: Request, res: Response) {
-    const { id } = req.params;
-    const oneData = await manager().getList(id);
-    res.status(StatusCode.SuccessRequest).json(oneData);
-
+  static async getList(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { id } = req.params;
+      if (
+        !id.match(
+          '^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$'
+        )
+      ) {
+        return next(HttpErr.badRequest(ExceptionMessages.INVALID.ID));
+      }
+      const oneData = await manager().getList(id);
+      if (!oneData) {
+        return next(HttpErr.notFound(ExceptionMessages.NOT_FOUND.LIST));
+      }
+      res.status(StatusCode.SuccessRequest).json(oneData);
+    } catch (e) {
+      next(HttpErr.internalServerError(ExceptionMessages.INTERNAL));
+    }
   }
 
-  static async updateList(req: Request, res: Response) {
+  static async updateList(req: Request, res: Response, next: NextFunction) {
     const { title, cards } = req.body;
     const { id } = req.params;
-    const updatedData: IList = {};
+    try {
+      if (
+        !id.match(
+          '^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$'
+        )
+      ) {
+        return next(HttpErr.badRequest(ExceptionMessages.INVALID.ID));
+      }
+      const updatedData: IList = {};
+      if (title && title.trim()) {
+        updatedData.title = title;
+      }
+      if (cards && Array.isArray(cards)) {
+        updatedData.card_ids = cards;
+      }
+      if (!Object.entries(updatedData).length) {
+        return next(HttpErr.notFound(ExceptionMessages.NOT_FOUND.LIST));
+      }
 
-    if (title && title.trim()) {
-      updatedData.title = title;
+      const updateData = await manager().updateList(id, updatedData);
+      res.status(StatusCode.SuccessRequest).json(updateData);
+    } catch (e) {
+      next(HttpErr.internalServerError(ExceptionMessages.INTERNAL));
     }
-
-    if (cards) {
-      updatedData.card_ids = cards;
-    }
-
-    const updateData = await manager().updateList(id, updatedData);
-    res.status(StatusCode.SuccessRequest).json(updateData);
-
-
   }
 
-  static async updateCardsLists(req: Request, res: Response) {
-    const manager = getManager().getCustomRepository(ListRepository);
-    const { cardId, listId, data } = req.body;
+  static async updateCardsLists(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) {
+    try {
+      const { cardId, listId, data } = req.body;
 
-    const updateData = await manager.updateCardsLists(cardId, listId, data);
-    res.status(StatusCode.SuccessRequest).json(updateData);
-
+      const updateData = await manager().updateCardsLists(cardId, listId, data);
+      res.status(StatusCode.SuccessRequest).json(updateData);
+    } catch (e) {
+      next(HttpErr.internalServerError(ExceptionMessages.INTERNAL));
+    }
   }
 
-  static async deleteList(req: Request, res: Response) {
-    const { id } = req.params;
-    await manager().deleteList(id);
-    res.status(StatusCode.SuccessRequest).json({
-      message: 'List successfully deleted.',
-    });
-
+  static async deleteList(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { id } = req.params;
+      await manager().deleteList(id);
+      res.status(StatusCode.SuccessRequest).json({
+        message: 'List successfully deleted.',
+      });
+    } catch (e) {
+      next(HttpErr.internalServerError(ExceptionMessages.INTERNAL));
+    }
   }
 }
