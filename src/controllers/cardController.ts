@@ -19,7 +19,7 @@ export class CardController {
       }
       card.title = title;
       card.list_id = list_id;
-      const cardData: CardInterface = await manager().createCard(card);
+      const cardData = await manager().createCard(card);
       res.status(StatusCode.CreateRequest).json(cardData);
     } catch {
       next(HttpErr.internalServerError(ExceptionMessages.INVALID.INPUT));
