@@ -9,5 +9,9 @@ class HttpError {
   internalServerError(message: string) {
     return new Exception(statusCodes.InternalServerError, message);
   }
+
+  badRequest(message: string) {
+    return new Exception(statusCodes.BadRequest, message);
+  }
 }
 export const HttpErr = new HttpError();

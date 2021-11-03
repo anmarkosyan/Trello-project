@@ -19,6 +19,7 @@ const ExceptionMessages = {
     LISTS: 'Not valid input for lists',
     TEXT: 'Not valid input for comment',
     INPUT: 'Not valid input',
+    ID: 'Id is not valid',
   },
   INCORRECT: {
     PASSWORD: 'Password is not correct',
