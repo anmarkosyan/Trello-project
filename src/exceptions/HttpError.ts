@@ -1,12 +1,13 @@
 import Exception from './exceptions';
+import statusCodes from './statusCodes';
 
 class HttpError {
   notFound(message: string) {
-    return new Exception(400, message);
+    return new Exception(statusCodes.NotFound, message);
   }
 
   internalServerError(message: string) {
-    return new Exception(500, message);
+    return new Exception(statusCodes.InternalServerError, message);
   }
 }
 export const HttpErr = new HttpError();
