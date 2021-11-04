@@ -37,7 +37,7 @@ export class ListRepository extends Repository<ListEntity> {
 
   async getList(listId: string): Promise<ListInterface | null> {
     const list = await this.createQueryBuilder('list')
-      .select()
+      .leftJoinAndSelect('list.cards', 'card')
       .where('list.id = :query', { query: listId })
       .getOne();
     return list || null;
