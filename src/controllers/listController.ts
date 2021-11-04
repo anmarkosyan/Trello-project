@@ -2,12 +2,8 @@ import { Request, Response, NextFunction } from 'express';
 import { getManager } from 'typeorm';
 import { ListRepository } from '../services/list';
 import { ListEntity } from '../entities/List';
-import {
-  ListEntityInterface,
-  ListInterface,
-  IList,
-  IBoard,
-} from '../interfaces';
+
+import { ListEntityInterface, ListInterface, IList } from '../interfaces';
 import StatusCode from '../exceptions/statusCodes';
 import { HttpErr } from '../exceptions/HttpError';
 import ExceptionMessages from '../exceptions/messages';
