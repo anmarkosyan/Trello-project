@@ -7,6 +7,8 @@ import { boardRoutes } from './routes/boardRoutes';
 import { listRoutes } from './routes/listRoutes';
 import { cardRoutes } from './routes/cardRoutes';
 import { commentRoutes } from './routes/commentRoutes';
+import swaggerUi from 'swagger-ui-express';
+import swaggerDocument from './../docs/openapi/api.json'
 
 const app = express();
 
@@ -26,6 +28,7 @@ app.use('/api/v1/boards', boardRoutes);
 app.use('/api/v1/lists', listRoutes);
 app.use('/api/v1/cards', cardRoutes);
 app.use('/api/v1/comments', commentRoutes);
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 app.all('*', (req: Request, res: Response, next: NextFunction) => {
   next(HttpErr.notFound(`Can't find ${req.originalUrl} on this server!`));
