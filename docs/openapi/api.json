@@ -50,7 +50,7 @@
         "parameters": [],
         "responses": {
           "200": {
-            "description": "Show all boards",
+            "description": "Ok. Board created",
             "schema": {
               "type": "array",
               "items": {
@@ -58,8 +58,8 @@
               }
             }
           },
-          "400": {
-            "description": "bad input parameter"
+          "500": {
+            "description": "Internal server error"
           }
         }
       },
@@ -89,13 +89,16 @@
         ],
         "responses": {
           "201": {
-            "description": "The board created"
+            "description": "Created. The board created",
+            "schema": {
+              "$ref": "#/definitions/Board"
+            }
           },
           "400": {
-            "description": "invalid input, object invalid"
+            "description": "Bad request. Invalid title"
           },
-          "403": {
-            "description": "an existing item already exists"
+          "500": {
+            "description": "Internal server error"
           }
         }
       }
@@ -123,13 +126,19 @@
         ],
         "responses": {
           "200": {
-            "description": "A Board object",
+            "description": "Ok.",
             "schema": {
               "$ref": "#/definitions/Board"
             }
           },
           "400": {
-            "description": "bad input parameter"
+            "description": "Bad request. ID is not valid"
+          },
+          "404": {
+            "description": "Not found. Board not found"
+          },
+          "500": {
+            "description": "Internal server error"
           }
         }
       },
@@ -155,10 +164,16 @@
         ],
         "responses": {
           "200": {
-            "description": "Board successfuly deleted"
+            "description": "Ok. Board successfuly deleted"
           },
           "400": {
-            "description": "bad input parameter"
+            "description": "Bad request. ID is not valid"
+          },
+          "404": {
+            "description": "Not found. Board not found"
+          },
+          "500": {
+            "description": "Internal server error"
           }
         }
       },
@@ -192,13 +207,19 @@
         ],
         "responses": {
           "200": {
-            "description": "Successful operation",
+            "description": "Ok. Board updated",
             "schema": {
               "$ref": "#/definitions/Board"
             }
           },
           "400": {
-            "description": "bad input parameter"
+            "description": "Bad request. ID is not valid"
+          },
+          "404": {
+            "description": "Not found. Board not found"
+          },
+          "500": {
+            "description": "Internal server error"
           }
         }
       }
@@ -256,16 +277,16 @@
         ],
         "responses": {
           "201": {
-            "description": "list successfully created",
+            "description": "Created. List successfully created",
             "schema": {
               "$ref": "#/definitions/List"
             }
           },
           "400": {
-            "description": "invalid input, object invalid"
+            "description": "Bad request. Title is not valid"
           },
-          "409": {
-            "description": "an existing item already exists"
+          "500": {
+            "description": "Internal server error"
           }
         }
       },
@@ -291,7 +312,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Successful operation",
+            "description": "Ok. Successful operation",
             "schema": {
               "type": "array",
               "items": {
@@ -299,8 +320,8 @@
               }
             }
           },
-          "400": {
-            "description": "bad input parameter"
+          "500": {
+            "description": "Internal server error"
           }
         }
       }
@@ -328,13 +349,19 @@
         ],
         "responses": {
           "200": {
-            "description": "A List object",
+            "description": "Ok. Successfull operation",
             "schema": {
               "$ref": "#/definitions/List"
             }
           },
           "400": {
-            "description": "bad input parameter"
+            "description": "Bad request. ID is not valid"
+          },
+          "404": {
+            "description": "Not found. List not found"
+          },
+          "500": {
+            "description": "Internal server error"
           }
         }
       },
@@ -360,10 +387,13 @@
         ],
         "responses": {
           "200": {
-            "description": "List successfuly deleted"
+            "description": "Ok. List successfuly deleted"
           },
           "400": {
-            "description": "bad input parameter"
+            "description": "Bad request. ID is not valid"
+          },
+          "500": {
+            "description": "Internal server error"
           }
         }
       },
@@ -397,13 +427,19 @@
         ],
         "responses": {
           "200": {
-            "description": "Successful operation",
+            "description": "Ok. Successful operation",
             "schema": {
               "$ref": "#/definitions/List"
             }
           },
           "400": {
-            "description": "bad input parameter"
+            "description": "Bad request. ID is not valid"
+          },
+          "404": {
+            "description": "Not found. List not found"
+          },
+          "500": {
+            "description": "Internal server error"
           }
         }
       }
@@ -422,7 +458,7 @@
         "parameters": [],
         "responses": {
           "200": {
-            "description": "Show all cards",
+            "description": "Ok. Successful operation",
             "schema": {
               "type": "array",
               "items": {
@@ -430,8 +466,8 @@
               }
             }
           },
-          "400": {
-            "description": "bad input parameter"
+          "500": {
+            "description": "Internal server error"
           }
         }
       },
@@ -461,16 +497,16 @@
         ],
         "responses": {
           "201": {
-            "description": "card successfully created",
+            "description": "Created. Card successfully created",
             "schema": {
               "$ref": "#/definitions/Card"
             }
           },
           "400": {
-            "description": "invalid input, object invalid"
+            "description": "Bad request. Invalid title"
           },
-          "409": {
-            "description": "an existing item already exists"
+          "500": {
+            "description": "Internal server error"
           }
         }
       }
@@ -498,13 +534,19 @@
         ],
         "responses": {
           "200": {
-            "description": "A Card object",
+            "description": "Ok. Successful operation",
             "schema": {
               "$ref": "#/definitions/Card"
             }
           },
           "400": {
-            "description": "bad input parameter"
+            "description": "Bad request. ID is not valid"
+          },
+          "404": {
+            "description": "Not found. Card not found"
+          },
+          "500": {
+            "description": "Internal server error"
           }
         }
       },
@@ -530,10 +572,13 @@
         ],
         "responses": {
           "200": {
-            "description": "Card successfuly deleted"
+            "description": "Ok. Card successfuly deleted"
           },
           "400": {
-            "description": "bad input parameter"
+            "description": "Bad request. ID is not valid"
+          },
+          "500": {
+            "description": "Internal server error"
           }
         }
       },
@@ -567,13 +612,19 @@
         ],
         "responses": {
           "200": {
-            "description": "Successful operation",
+            "description": "Ok. Successful operation",
             "schema": {
               "$ref": "#/definitions/Card"
             }
           },
           "400": {
-            "description": "bad input parameter"
+            "description": "Bad request. ID is not valid"
+          },
+          "404": {
+            "description": "Not found. Card not found"
+          },
+          "500": {
+            "description": "Internal server error"
           }
         }
       }
@@ -592,7 +643,7 @@
         "parameters": [],
         "responses": {
           "200": {
-            "description": "Show all comments",
+            "description": "Ok. Show all comments",
             "schema": {
               "type": "array",
               "items": {
@@ -600,8 +651,8 @@
               }
             }
           },
-          "400": {
-            "description": "bad input parameter"
+          "500": {
+            "description": "Internal server error"
           }
         }
       },
@@ -631,16 +682,16 @@
         ],
         "responses": {
           "201": {
-            "description": "card successfully created",
+            "description": "Created. Comment successfully created",
             "schema": {
               "$ref": "#/definitions/Comment"
             }
           },
           "400": {
-            "description": "invalid input, object invalid"
+            "description": "Bad request. ID is not valid"
           },
-          "409": {
-            "description": "an existing item already exists"
+          "500": {
+            "description": "Internal server error"
           }
         }
       }
@@ -700,10 +751,16 @@
         ],
         "responses": {
           "200": {
-            "description": "Comment successfuly deleted"
+            "description": "Ok. Comment successfuly deleted"
           },
           "400": {
-            "description": "bad input parameter"
+            "description": "Bad request. ID is not valid"
+          },
+          "404": {
+            "description": "Not found. Comment not found"
+          },
+          "500": {
+            "description": "Internal server error"
           }
         }
       },
@@ -737,13 +794,19 @@
         ],
         "responses": {
           "200": {
-            "description": "Successful operation",
+            "description": "Ok. Successful operation",
             "schema": {
               "$ref": "#/definitions/Comment"
             }
           },
           "400": {
-            "description": "bad input parameter"
+            "description": "Bad request. ID is not valid"
+          },
+          "404": {
+            "description": "Not found. Card not found"
+          },
+          "500": {
+            "description": "Internal server error"
           }
         }
       }
