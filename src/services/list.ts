@@ -81,7 +81,7 @@ export class ListRepository extends Repository<ListEntity> {
     }
   }
 
-  async deleteList(id: string): Promise<void> {
+  async deleteList(id: string): Promise<ListInterface | null> {
     const listData = await this.findOne(id);
     await this.createQueryBuilder('list')
       .delete()
@@ -102,5 +102,6 @@ export class ListRepository extends Repository<ListEntity> {
       .set({ list_ids: newData })
       .where('board.id = :query', { query: listData!.board_id })
       .execute();
+    return listData || null;
   }
 }

@@ -2,6 +2,8 @@ import { EntityRepository, Repository } from 'typeorm';
 import { ICard, CardInterface } from '../interfaces';
 import { CardEntity } from '../entities/Card';
 import { ListEntity } from '../entities/List';
+import { HttpErr } from '../exceptions/HttpError';
+import ExceptionMessages from '../exceptions/messages';
 
 interface newCard {
   title: string;
@@ -50,7 +52,7 @@ export class CardRepository extends Repository<CardEntity> {
     return updatedCard || null;
   }
 
-  async deleteCard(id: string): Promise<void> {
+  async deleteCard(id: string): Promise<CardInterface | null> {
     const cardData = await this.findOne(id);
     await this.createQueryBuilder('card')
       .delete()
@@ -71,5 +73,6 @@ export class CardRepository extends Repository<CardEntity> {
       .set({ card_ids: newData })
       .where('list.id = :query', { query: cardData!.list_id })
       .execute();
+    return cardData || null;
   }
 }

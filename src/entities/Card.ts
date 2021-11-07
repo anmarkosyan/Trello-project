@@ -27,7 +27,7 @@ export class CardEntity extends BaseEntity implements CardEntityInterface {
   @UpdateDateColumn()
   updated_at: Date;
 
-  @Column('varchar', { length: 200, nullable: true })
+  @Column('varchar', { length: 200, default: '' })
   description: string;
 
   @Column()
