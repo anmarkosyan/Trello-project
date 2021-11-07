@@ -2,8 +2,6 @@ import { EntityRepository, Repository } from 'typeorm';
 import { ICard, CardInterface } from '../interfaces';
 import { CardEntity } from '../entities/Card';
 import { ListEntity } from '../entities/List';
-import { HttpErr } from '../exceptions/HttpError';
-import ExceptionMessages from '../exceptions/messages';
 
 interface newCard {
   title: string;
