@@ -97,7 +97,7 @@ export class CommentController {
       }
       const data = await manager().deleteComment(id);
       if (!data) {
-        return next(HttpErr.badRequest(ExceptionMessages.INVALID.ID));
+        return next(HttpErr.notFound(ExceptionMessages.NOT_FOUND.BOARD));
       }
 
       res.status(StatusCode.SuccessRequest).json({

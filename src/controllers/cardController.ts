@@ -99,7 +99,10 @@ export class CardController {
       ) {
         return next(HttpErr.badRequest(ExceptionMessages.INVALID.ID));
       }
-      await manager().deleteCard(id);
+      const data = await manager().deleteCard(id);
+      if (!data) {
+        return next(HttpErr.notFound(ExceptionMessages.NOT_FOUND.BOARD));
+      }
       res.status(StatusCode.SuccessRequest).json({
         message: 'Card successfully deleted.',
       });

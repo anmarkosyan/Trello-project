@@ -50,7 +50,7 @@ export class CardRepository extends Repository<CardEntity> {
     return updatedCard || null;
   }
 
-  async deleteCard(id: string): Promise<void> {
+  async deleteCard(id: string): Promise<CardInterface | null> {
     const cardData = await this.findOne(id);
     await this.createQueryBuilder('card')
       .delete()
@@ -71,5 +71,6 @@ export class CardRepository extends Repository<CardEntity> {
       .set({ card_ids: newData })
       .where('list.id = :query', { query: cardData!.list_id })
       .execute();
+    return cardData || null;
   }
 }
