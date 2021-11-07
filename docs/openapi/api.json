@@ -50,7 +50,7 @@
         "parameters": [],
         "responses": {
           "200": {
-            "description": "Ok. Successful operation",
+            "description": "Ok. Successfull operation",
             "schema": {
               "type": "array",
               "items": {
@@ -238,7 +238,7 @@
         "parameters": [],
         "responses": {
           "200": {
-            "description": "Show all lists",
+            "description": "Ok. Show all lists",
             "schema": {
               "type": "array",
               "items": {
@@ -246,8 +246,8 @@
               }
             }
           },
-          "400": {
-            "description": "bad input parameter"
+          "500": {
+            "description": "Internal server error"
           }
         }
       },
