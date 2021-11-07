@@ -1,0 +1,938 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "Trello like todo API",
+    "version": "1.0.0",
+    "title": "node-team-4 Trello API",
+    "contact": {
+      "email": "Hayk_Margaryan1@epam.com"
+    },
+    "license": {
+      "name": "Apache 2.0",
+      "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+    }
+  },
+  "host": "virtserver.swaggerhub.com",
+  "basePath": "/haiko64/node-team-4/1.0.0",
+  "tags": [
+    {
+      "name": "Board",
+      "description": "Board related endpoints"
+    },
+    {
+      "name": "List",
+      "description": "List related endpoints"
+    },
+    {
+      "name": "Card",
+      "description": "Card related endpoints"
+    },
+    {
+      "name": "Comment",
+      "description": "Comment related endpoints"
+    }
+  ],
+  "schemes": [
+    "https"
+  ],
+  "paths": {
+    "/boards": {
+      "get": {
+        "tags": [
+          "Board"
+        ],
+        "summary": "shows all boards",
+        "description": "Shows all boards created in the application.\n",
+        "operationId": "getAllBoards",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Show all boards",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Board"
+              }
+            }
+          },
+          "400": {
+            "description": "bad input parameter"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Board"
+        ],
+        "summary": "add a new board",
+        "description": "Creates a new board in the application.\n",
+        "operationId": "createBoard",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "title",
+            "description": "new board title to be added",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "The board created"
+          },
+          "400": {
+            "description": "invalid input, object invalid"
+          },
+          "403": {
+            "description": "an existing item already exists"
+          }
+        }
+      }
+    },
+    "/boards/{id}": {
+      "get": {
+        "tags": [
+          "Board"
+        ],
+        "summary": "get a board by id",
+        "description": "Shows the board by it's ID.\n",
+        "operationId": "getBoard",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Board ID",
+            "required": true,
+            "type": "string",
+            "format": "uuid"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A Board object",
+            "schema": {
+              "$ref": "#/definitions/Board"
+            }
+          },
+          "400": {
+            "description": "bad input parameter"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Board"
+        ],
+        "summary": "delete a board by id",
+        "description": "Deletes the board by it's ID.\n",
+        "operationId": "deleteBoard",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Board ID",
+            "required": true,
+            "type": "string",
+            "format": "uuid"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Board successfuly deleted"
+          },
+          "400": {
+            "description": "bad input parameter"
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "Board"
+        ],
+        "summary": "update a board by id",
+        "description": "Updates the board by it's ID.\n",
+        "operationId": "updateBoard",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Board ID",
+            "required": true,
+            "type": "string",
+            "format": "uuid"
+          },
+          {
+            "in": "body",
+            "name": "title",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "schema": {
+              "$ref": "#/definitions/Board"
+            }
+          },
+          "400": {
+            "description": "bad input parameter"
+          }
+        }
+      }
+    },
+    "/lists": {
+      "get": {
+        "tags": [
+          "List"
+        ],
+        "summary": "shows all lists",
+        "description": "Shows all lists created on the board\n",
+        "operationId": "getAllLists",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Show all lists",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/List"
+              }
+            }
+          },
+          "400": {
+            "description": "bad input parameter"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "List"
+        ],
+        "summary": "adds a new list on the board",
+        "description": "Creates a new list on the Board.\n",
+        "operationId": "createList",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "list",
+            "description": "new list to be added",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "list successfully created",
+            "schema": {
+              "$ref": "#/definitions/List"
+            }
+          },
+          "400": {
+            "description": "invalid input, object invalid"
+          },
+          "409": {
+            "description": "an existing item already exists"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "List"
+        ],
+        "summary": "update a list by id",
+        "description": "Updates the list by it's ID.\n",
+        "operationId": "updateCardsLists",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "title",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/title"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/List"
+              }
+            }
+          },
+          "400": {
+            "description": "bad input parameter"
+          }
+        }
+      }
+    },
+    "/lists/{id}": {
+      "get": {
+        "tags": [
+          "List"
+        ],
+        "summary": "get a list by id",
+        "description": "Shows the list by it's ID.\n",
+        "operationId": "getList",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "List ID",
+            "required": true,
+            "type": "string",
+            "format": "uuid"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A List object",
+            "schema": {
+              "$ref": "#/definitions/List"
+            }
+          },
+          "400": {
+            "description": "bad input parameter"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "List"
+        ],
+        "summary": "delete a list by id",
+        "description": "Deletes the list by it's ID.\n",
+        "operationId": "deleteList",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "List ID",
+            "required": true,
+            "type": "string",
+            "format": "uuid"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List successfuly deleted"
+          },
+          "400": {
+            "description": "bad input parameter"
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "List"
+        ],
+        "summary": "update a list by id",
+        "description": "Updates the list by it's ID.\n",
+        "operationId": "updateList",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "List ID",
+            "required": true,
+            "type": "string",
+            "format": "uuid"
+          },
+          {
+            "in": "body",
+            "name": "title",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "schema": {
+              "$ref": "#/definitions/List"
+            }
+          },
+          "400": {
+            "description": "bad input parameter"
+          }
+        }
+      }
+    },
+    "/cards": {
+      "get": {
+        "tags": [
+          "Card"
+        ],
+        "summary": "shows all cards",
+        "description": "Shows all cards created in the application.\n",
+        "operationId": "getAllCards",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Show all cards",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Card"
+              }
+            }
+          },
+          "400": {
+            "description": "bad input parameter"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Card"
+        ],
+        "summary": "adds a new cards",
+        "description": "Creates a new card in the application.\n",
+        "operationId": "createCard",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "title",
+            "description": "new card to be added",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "card successfully created",
+            "schema": {
+              "$ref": "#/definitions/Card"
+            }
+          },
+          "400": {
+            "description": "invalid input, object invalid"
+          },
+          "409": {
+            "description": "an existing item already exists"
+          }
+        }
+      }
+    },
+    "/cards/{id}": {
+      "get": {
+        "tags": [
+          "Card"
+        ],
+        "summary": "get a card by id",
+        "description": "Shows the card by it's ID.\n",
+        "operationId": "getCard",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Card ID",
+            "required": true,
+            "type": "string",
+            "format": "uuid"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A Card object",
+            "schema": {
+              "$ref": "#/definitions/Card"
+            }
+          },
+          "400": {
+            "description": "bad input parameter"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Card"
+        ],
+        "summary": "delete a card by id",
+        "description": "Deletes the card by it's ID.\n",
+        "operationId": "deleteCard",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Card ID",
+            "required": true,
+            "type": "string",
+            "format": "uuid"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Card successfuly deleted"
+          },
+          "400": {
+            "description": "bad input parameter"
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "Card"
+        ],
+        "summary": "update a card by id",
+        "description": "Updates the card by it's ID.\n",
+        "operationId": "updateCard",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Card ID",
+            "required": true,
+            "type": "string",
+            "format": "uuid"
+          },
+          {
+            "in": "body",
+            "name": "title",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "schema": {
+              "$ref": "#/definitions/Card"
+            }
+          },
+          "400": {
+            "description": "bad input parameter"
+          }
+        }
+      }
+    },
+    "/comments": {
+      "get": {
+        "tags": [
+          "Comment"
+        ],
+        "summary": "shows all comments",
+        "description": "Shows all comments created in the application.\n",
+        "operationId": "getAllComments",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Show all comments",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Comment"
+              }
+            }
+          },
+          "400": {
+            "description": "bad input parameter"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Comment"
+        ],
+        "summary": "adds a new comment",
+        "description": "Creates a new comment in the application.\n",
+        "operationId": "createComment",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "text",
+            "description": "new comment to be added",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "card successfully created",
+            "schema": {
+              "$ref": "#/definitions/Comment"
+            }
+          },
+          "400": {
+            "description": "invalid input, object invalid"
+          },
+          "409": {
+            "description": "an existing item already exists"
+          }
+        }
+      }
+    },
+    "/comments/{id}": {
+      "get": {
+        "tags": [
+          "Comment"
+        ],
+        "summary": "get a comment by id",
+        "description": "Shows the comment by it's ID.\n",
+        "operationId": "getComment",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Comment ID",
+            "required": true,
+            "type": "string",
+            "format": "uuid"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A Comment object",
+            "schema": {
+              "$ref": "#/definitions/Comment"
+            }
+          },
+          "400": {
+            "description": "bad input parameter"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Comment"
+        ],
+        "summary": "delete a comment by id",
+        "description": "Deletes the comment by it's ID.\n",
+        "operationId": "deleteComment",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Comment ID",
+            "required": true,
+            "type": "string",
+            "format": "uuid"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Comment successfuly deleted"
+          },
+          "400": {
+            "description": "bad input parameter"
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "Comment"
+        ],
+        "summary": "update a comment by id",
+        "description": "Updates the comment by it's ID.\n",
+        "operationId": "updateComment",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Comment ID",
+            "required": true,
+            "type": "string",
+            "format": "uuid"
+          },
+          {
+            "in": "body",
+            "name": "title",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "schema": {
+              "$ref": "#/definitions/Comment"
+            }
+          },
+          "400": {
+            "description": "bad input parameter"
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "Board": {
+      "type": "object",
+      "required": [
+        "created_at",
+        "id",
+        "list_ids",
+        "title",
+        "updated_at"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uuid",
+          "example": "5194d025-6a35-4542-9411-c2b29947b544"
+        },
+        "title": {
+          "type": "string",
+          "example": "My first board"
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time",
+          "example": "2016-08-29T09:12:33.001Z"
+        },
+        "updated_at": {
+          "type": "string",
+          "format": "date-time",
+          "example": "2016-08-29T09:12:33.001Z"
+        },
+        "list_ids": {
+          "type": "array",
+          "example": [
+            "27d93526-1094-44ad-875f-7a0586a7ebc9",
+            "4132a290-de7c-4e73-ab96-d4f78c6b04da"
+          ],
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "List": {
+      "type": "object",
+      "required": [
+        "board_id",
+        "card_ids",
+        "created_at",
+        "id",
+        "title",
+        "updated_at"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uuid",
+          "example": "0ab4bf7e-7f03-4897-b174-78c551f6c1ac"
+        },
+        "title": {
+          "type": "string",
+          "example": "My first list"
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time",
+          "example": "2016-08-29T09:12:33.001Z"
+        },
+        "updated_at": {
+          "type": "string",
+          "format": "date-time",
+          "example": "2016-08-29T09:12:33.001Z"
+        },
+        "board_id": {
+          "type": "string",
+          "format": "uuid",
+          "example": "0ab4bf7e-7f03-4897-b174-78c551f6c1ac"
+        },
+        "card_ids": {
+          "type": "array",
+          "example": [
+            "6a8bd9b2-bacd-47a5-92df-1d3c13030c49",
+            "263e2774-b4ec-4add-927d-933e4d9b75d2"
+          ],
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "Card": {
+      "type": "object",
+      "required": [
+        "created_at",
+        "description",
+        "id",
+        "list_id",
+        "title",
+        "updated_at"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uuid",
+          "example": "0ab4bf7e-7f03-4897-b174-78c551f6c1ac"
+        },
+        "title": {
+          "type": "string",
+          "example": "My first card"
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time",
+          "example": "2016-08-29T09:12:33.001Z"
+        },
+        "updated_at": {
+          "type": "string",
+          "format": "date-time",
+          "example": "2016-08-29T09:12:33.001Z"
+        },
+        "description": {
+          "type": "string",
+          "example": "My first card description"
+        },
+        "list_id": {
+          "type": "string",
+          "format": "uuid",
+          "example": "0ab4bf7e-7f03-4897-b174-78c551f6c1ac"
+        }
+      }
+    },
+    "Comment": {
+      "type": "object",
+      "required": [
+        "card_id",
+        "created_at",
+        "id",
+        "text",
+        "updated_at"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uuid",
+          "example": "0ab4bf7e-7f03-4897-b174-78c551f6c1ac"
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time",
+          "example": "2016-08-29T09:12:33.001Z"
+        },
+        "updated_at": {
+          "type": "string",
+          "format": "date-time",
+          "example": "2016-08-29T09:12:33.001Z"
+        },
+        "text": {
+          "type": "string",
+          "example": "My first comment"
+        },
+        "card_id": {
+          "type": "string",
+          "format": "uuid",
+          "example": "0ab4bf7e-7f03-4897-b174-78c551f6c1ac"
+        }
+      }
+    },
+    "title": {
+      "type": "object",
+      "properties": {
+        "cardId": {
+          "type": "string",
+          "example": "6a8bd9b2-bacd-47a5-92df-1d3c13030c49"
+        },
+        "listId": {
+          "type": "string",
+          "example": "614f4a3c-a7a3-4b76-b45d-82072fba4eff"
+        },
+        "data": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/List"
+          }
+        }
+      }
+    }
+  }
+}
