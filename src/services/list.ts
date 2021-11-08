@@ -1,4 +1,9 @@
-import { EntityRepository, Repository } from 'typeorm';
+import {
+  EntityRepository,
+  Repository,
+  getConnection,
+  getManager,
+} from 'typeorm';
 import { BoardEntity } from '../entities/Board';
 import { ListEntity } from '../entities/List';
 import { CardEntity } from '../entities/Card';
@@ -13,21 +18,32 @@ interface newList {
 
 @EntityRepository(ListEntity)
 export class ListRepository extends Repository<ListEntity> {
-  async createList(newList: newList): Promise<ListInterface | null> {
-    const list = await this.save(newList);
-    const board = await BoardEntity.createQueryBuilder('board')
-      .select()
-      .where('board.id = :query', { query: list.board_id })
-      .getOne();
+  async createList(newList: newList): Promise<ListInterface> {
+    const connection = getConnection();
+    const queryRunner = connection.createQueryRunner();
 
-    const newBoardLists = [...board!.list_ids, list.id];
-    await BoardEntity.createQueryBuilder('board')
-      .update(BoardEntity)
-      .set({ list_ids: newBoardLists })
-      .where('board.id = :query', { query: list.board_id })
-      .execute();
+    await queryRunner.startTransaction();
+    try {
+      const list = await queryRunner.manager.save(ListEntity, newList);
 
-    return list || null;
+      const board = await queryRunner.manager.findOne(BoardEntity, {
+        id: list.board_id,
+      });
+      const newBoardLists = [...board!.list_ids, list.id];
+      await queryRunner.manager.update(
+        BoardEntity,
+        { id: list.board_id },
+        { list_ids: newBoardLists }
+      );
+
+      await queryRunner.commitTransaction();
+      return list;
+    } catch {
+      await queryRunner.rollbackTransaction();
+      throw HttpErr.internalServerError(ExceptionMessages.INTERNAL);
+    } finally {
+      await queryRunner.release();
+    }
   }
 
   async getAllLists(): Promise<ListInterface[]> {
@@ -58,50 +74,64 @@ export class ListRepository extends Repository<ListEntity> {
     listId: string,
     data: any[]
   ): Promise<ListInterface[]> {
-    try {
-      const listIds = data.map(list => list.list_id);
+    const listIds = data.map(list => list.list_id);
 
-      const listsArray = await this.findByIds(listIds);
+    const connection = getConnection();
+    const queryRunner = connection.createQueryRunner();
+
+    await queryRunner.startTransaction();
+
+    try {
+      const listsArray = await queryRunner.manager.findByIds(
+        ListEntity,
+        listIds
+      );
 
       for (const list of listsArray) {
         const listData = data.find(item => list.id === item.list_id);
 
         list.card_ids = listData.card_ids;
       }
-      await CardEntity.createQueryBuilder('card')
-        .update(CardEntity)
-        .set({ list_id: listId })
-        .where('card.id = :query', { query: cardId })
-        .execute();
-      await this.save(listsArray);
 
-      return await this.findByIds(listIds);
+      await queryRunner.manager.update(CardEntity, cardId, { list_id: listId });
+
+      await queryRunner.manager.save(ListEntity, listsArray);
+      await queryRunner.commitTransaction();
+      return await queryRunner.manager.findByIds(ListEntity, listIds);
     } catch {
-      throw HttpErr.internalServerError(ExceptionMessages.INVALID.INPUT);
+      await queryRunner.rollbackTransaction();
+      throw HttpErr.notFound('internal server error');
+    } finally {
+      await queryRunner.release();
     }
   }
 
-  async deleteList(id: string): Promise<ListInterface | null> {
-    const listData = await this.findOne(id);
-    await this.createQueryBuilder('list')
-      .delete()
-      .from(ListEntity)
-      .where('list.id = :query', { query: id })
-      .execute();
+  async deleteList(id: string): Promise<void> {
+    const connection = getConnection();
+    const queryRunner = connection.createQueryRunner();
 
-    const board = await BoardEntity.createQueryBuilder('board')
-      .select()
-      .where('board.id = :query', { query: listData?.board_id })
-      .getOne();
+    await queryRunner.startTransaction();
+    try {
+      const list = await queryRunner.manager.findOne(ListEntity, { id });
 
-    const newData = [...board!.list_ids];
-    newData.splice(newData.indexOf(listData!.id), 1);
+      const board = await queryRunner.manager.findOne(BoardEntity, {
+        id: list!.board_id,
+      });
+      await queryRunner.manager.delete(ListEntity, { id });
 
-    await BoardEntity.createQueryBuilder('board')
-      .update(BoardEntity)
-      .set({ list_ids: newData })
-      .where('board.id = :query', { query: listData!.board_id })
-      .execute();
-    return listData || null;
+      const newBoardLists = [...board!.list_ids];
+      newBoardLists.splice(newBoardLists.indexOf(list!.id), 1);
+      await queryRunner.manager.update(
+        BoardEntity,
+        { id: board!.id },
+        { list_ids: newBoardLists }
+      );
+      await queryRunner.commitTransaction();
+    } catch {
+      await queryRunner.rollbackTransaction();
+      throw HttpErr.internalServerError(ExceptionMessages.INTERNAL);
+    } finally {
+      await queryRunner.release();
+    }
   }
 }

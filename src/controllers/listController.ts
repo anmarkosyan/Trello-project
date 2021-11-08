@@ -110,10 +110,7 @@ export class ListController {
       ) {
         return next(HttpErr.badRequest(ExceptionMessages.INVALID.ID));
       }
-      const data = await manager().deleteList(id);
-      if (!data) {
-        return next(HttpErr.notFound(ExceptionMessages.NOT_FOUND.LIST));
-      }
+      await manager().deleteList(id);
       res.status(StatusCode.SuccessRequest).json({
         message: 'List successfully deleted.',
       });
