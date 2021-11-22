@@ -11,7 +11,7 @@
 
 Trello Clone project using  traditional 3 tier software architecture
 for creating client-server applications.
-This repo created with EPAM Training Center back-end team. 
+
 ---
 ## Setup 
 
